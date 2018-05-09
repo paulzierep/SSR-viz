@@ -279,7 +279,6 @@ def align2csv(INPUT_FASTA_PATH, DISCRI_CSV_PATH):
 
 	records = list(SeqIO.parse(INPUT_FASTA_PATH, "fasta"))
 
-
 	with open(DISCRI_CSV_PATH, 'w') as csvfile:
 		fieldnames = ['Name', 'Class']
 		writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -287,8 +286,8 @@ def align2csv(INPUT_FASTA_PATH, DISCRI_CSV_PATH):
 		writer.writeheader()
 
 		for sequence in records:
-			print(sequence)
-			exit()
+			# print(sequence)
+			# exit()
 			writer.writerow({'Name': sequence.description, 'Class': ''})
 
 def align2discri_dict_update(INPUT_FASTA_PATH, discri_dict, regex_str = None):

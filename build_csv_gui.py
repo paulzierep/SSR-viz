@@ -20,12 +20,13 @@ if not sys.warnoptions:
 
 from prediction_rules.main_pred import pred_rule
 
-# from gooey import Gooey
+from gooey import Gooey
+from gooey import GooeyParser
 
-# @Gooey
+@Gooey
 def main():
 
-	parser = argparse.ArgumentParser(
+	parser = GooeyParser(
 		description='''Creates the csv-file, which can be used to 
 		label the classes in the sequence alignment''')
 
@@ -34,6 +35,7 @@ def main():
 						required=True,
 						dest = 'input',
 						help='Input file, must be a sequence alignment',
+						widget='FileChooser'
 						)
 
 	parser.add_argument(

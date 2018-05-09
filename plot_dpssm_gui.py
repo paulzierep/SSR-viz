@@ -21,13 +21,14 @@ if not sys.warnoptions:
 from prediction_rules.main_pred import pred_rule
 
 
-# from gooey import Gooey
+from gooey import Gooey
+from gooey import GooeyParser
 
-# @Gooey
+@Gooey
 def main():
 
 
-	parser = argparse.ArgumentParser(
+	parser = GooeyParser(
 		description='''Creates the differnce pssm plot, based on the
 					class_labela.csv file and the converted alignmet file''')
 
@@ -36,6 +37,7 @@ def main():
 						required=True,
 						dest = 'csv',
 						help='Input file, must be a csv file that with corresponding names to the alignment',
+						widget='FileChooser',
 						)
 
 	parser.add_argument(
@@ -51,6 +53,7 @@ def main():
 						required=True,
 						dest = 'ali',
 						help='Input file, must be a sequence alignment with corresponding names to the csv file',
+						widget='FileChooser'
 						)
 
 	parser.add_argument(
@@ -180,9 +183,9 @@ def main():
 
 	parser.add_argument(
 						'-no_hm_ava', '--heatmal_ava',
-						action='store_false',
+						action='store_true',
 						dest = 'hm_ava',
-						default = True,
+						default = False,
 						help='Remove all vs all representation in the heatmap'
 						)
 
@@ -191,7 +194,7 @@ def main():
 						'-no_pl_ava', '---plot_ava',
 						action='store_false',
 						dest = 'pl_ava',
-						default = True,
+						default = False,
 						help='Remove all vs all representation in the plot'
 						)
 
@@ -206,7 +209,6 @@ def main():
 	parser.add_argument('-hm_ova', nargs='*', help='One vs all classes for the heatmap (use the class labels as arguments to only show these classes) Example -hm_ova class_A',dest = 'hm_ova', default = None)
 	parser.add_argument('-pl_all', nargs='*', help='All vs all classes for the plot (use the class labels as arguments to only show these classes) Example -pl_all class_A class_B', dest = 'pl_all', default = None)
 	parser.add_argument('-pl_ova', nargs='*', help='One vs all classes for the plot (use the class labels as arguments to only show these classes) Example -pl_ova class_A', dest = 'pl_ova', default = None)
-
 
 
 

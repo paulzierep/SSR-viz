@@ -508,137 +508,6 @@ def add_all_vs_all(df):
 
 	return(final_df)
 
-# def add_average(df):
-
-# 	'''
-# 	computes the average cons_score for the all_vs_all matrix
-# 	'''
-# 	df_sum = df.sum(axis=0) / len(df.index)
-# 	df_sum = pd.DataFrame([df_sum], index= ['Average'], columns = df.columns)
-# 	df_with_average = pd.concat([df,df_sum])
-
-# 	return(df_with_average)
-
-def df2heatmap(df, path=None, int_size = False):
-	'''
-	Creates a heatmap of the df, using rows and columns for the plot.
-	Can be stored.
-	
-	color_choice --> see https://matplotlib.org/examples/color/colormaps_reference.html
-	[
-			'Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds',
-			'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu',
-			'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn']
-
-		 ('Diverging', [
-			'PiYG', 'PRGn', 'BrBG', 'PuOr', 'RdGy', 'RdBu',
-			'RdYlBu', 'RdYlGn', 'Spectral', 'coolwarm', 'bwr', 'seismic']),
-
-	'''
-
-	if int_size:
-
-		'''
-		compute a nice looking ratio for the fig depending on the classes and seq number
-		'''
-
-		length_df = len(df.columns)
-		higth_df = len(df.index)
-
-		higth_fig = higth_df                                    # 1 inch for each index
-		length_fig = length_df * 0.4                                # looks nice
-
-		plt.figure(figsize=(length_fig,higth_fig))
-
-	else:
-
-		length_fig,higth_fig = 300,5
-		plt.figure(figsize=(length_fig,higth_fig))
-
-	print(('Figsize:', higth_fig, length_fig))
-
-	plt.pcolor(df, cmap='seismic')                                  #create colormap with specific color
-
-	plt.yticks(np.arange(0.5, len(df.index), 1), df.index)          # set the ticks
-	plt.xticks(np.arange(0.5, len(df.columns), 1), df.columns, rotation='vertical')
-
-	# v = np.linspace(0, 1, 11, endpoint=True)
-	# print(v)
-
-	plt.colorbar()                                                  # plot the colorbar
-	plt.autoscale()                                                 # remove weard white part in plot
-
-	# if show_sum:
-	#   print(df)
-	#   exit()
-
-	if path:
-		plt.savefig(path,)
-	else:
-		plt.show()
-
-def df2plot(df, path=None, int_size = False):
-	'''
-	Creates a heatmap of the df, using rows and columns for the plot.
-	Can be stored.
-	
-	color_choice --> see https://matplotlib.org/examples/color/colormaps_reference.html
-	[
-			'Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds',
-			'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu',
-			'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn']
-
-		 ('Diverging', [
-			'PiYG', 'PRGn', 'BrBG', 'PuOr', 'RdGy', 'RdBu',
-			'RdYlBu', 'RdYlGn', 'Spectral', 'coolwarm', 'bwr', 'seismic']),
-
-	'''
-
-	if int_size:
-
-		'''
-		compute a nice looking ratio for the fig depending on the classes and seq number
-		'''
-
-		length_df = len(df.columns)
-		higth_df = len(df.index)
-
-		higth_fig = higth_df                                    # 1 inch for each index
-		length_fig = length_df * 0.4                                # looks nice
-
-		#print('Inteligent figsize:', higth_fig, length_fig)
-
-		length_fig, higth_fig = 100, 3
-		plt.figure(figsize=(length_fig,higth_fig))
-
-	else:
-
-		length_fig,higth_fig = 20,2
-		plt.figure(figsize=(length_fig,higth_fig))
-
-	print(('Figsize:', higth_fig, length_fig))
-
-	plt.plot(df.loc['Average'])                                     #create colormap with specific color
-
-	# plt.yticks(np.arange(0.5, len(df.index), 1), df.index)            # set the ticks
-	# plt.xticks(np.arange(0.5, len(df.columns), 1), df.columns, rotation='vertical')
-
-	# v = np.linspace(0, 1, 11, endpoint=True)
-	# print(v)
-
-	# plt.colorbar()                                                    # plot the colorbar
-
-	plt.autoscale()                                                 # remove weard white part in plot
-
-	# if show_sum:
-	#   print(df)
-	#   exit()
-
-	if path:
-		plt.savefig(path,)
-	else:
-		plt.show()
-
 
 def df2pssm_visual(df, path=None,
 				 **kwargs):
@@ -693,9 +562,10 @@ def df2pssm_visual(df, path=None,
 			hm_all_df = df_na.loc[(df_na.index.get_level_values('Class_A') == clas)]
 			all_df_list.append(hm_all_df)
 
-	#get the all vs all dataframe
+		# #get the all vs all dataframe
+		# print(kwargs['hm_ava'])
 	if basic.check_dict_key_not_none(kwargs, 'hm_ava'):
-		if kwargs['hm_ava'] == True:
+		if kwargs['hm_ava'] == False:
 			df_na = df[(df.index.get_level_values('Class_A') == 'all')]
 			all_df_list.append(df_na)
 
