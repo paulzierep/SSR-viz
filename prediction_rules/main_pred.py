@@ -262,74 +262,74 @@ class pred_rule():
 			if not basic.check_dict_key_true(kwargs, 'no_rule'):
 				pickle.dump(rule_object, open(rule_object.rule_storage, "wb"))
 
-	def load_prediction_rules(self):
+	# def load_prediction_rules(self):
 
-		''''
-		load all the computed prediction rules
-		'''
+	# 	''''
+	# 	load all the computed prediction rules
+	# 	'''
 
-		# rule_path = os.path.join(self.pred_rules, prediction_rule + '.rule')
+	# 	# rule_path = os.path.join(self.pred_rules, prediction_rule + '.rule')
 
-		if len(os.listdir(self.pred_rules)) == 0:
-			print(('no prediction rules computed in ' + self.prediction_rules))
-		else:
+	# 	if len(os.listdir(self.pred_rules)) == 0:
+	# 		print(('no prediction rules computed in ' + self.prediction_rules))
+	# 	else:
 
-			for file in os.listdir(self.pred_rules):
-				if '.rule' in file:
-					rule_path = os.path.join(self.pred_rules, file)
-					rule = pickle.load(open(rule_path, "rb"))
-					self.prediction_rules[file.replace('.rule', '')] = rule
+	# 		for file in os.listdir(self.pred_rules):
+	# 			if '.rule' in file:
+	# 				rule_path = os.path.join(self.pred_rules, file)
+	# 				rule = pickle.load(open(rule_path, "rb"))
+	# 				self.prediction_rules[file.replace('.rule', '')] = rule
 
-	def update_prediction_rule_evaluation(self, 
-		prediction_rule,
-		eval_type='loo',
-		rule_name = None,
-		**kwargs):
+	# def update_prediction_rule_evaluation(self, 
+	# 	prediction_rule,
+	# 	eval_type='loo',
+	# 	rule_name = None,
+	# 	**kwargs):
 
-		'''
-		create the data and eval object which is needed to score the 
-		rule object
+	# 	'''
+	# 	create the data and eval object which is needed to score the 
+	# 	rule object
 
-		the loo evaluation method only works if more then one sequence
-		are representative for each discriminator
-		'''
+	# 	the loo evaluation method only works if more then one sequence
+	# 	are representative for each discriminator
+	# 	'''
 
-		# if the name is not specified it is automatically the rule type
-		if not rule_name:
-			rule_name = prediction_rule
+	# 	# if the name is not specified it is automatically the rule type
+	# 	if not rule_name:
+	# 		rule_name = prediction_rule
 
-		if self.discri_dict == None:
-			print('Discri_dict not jet computed')
+	# 	if self.discri_dict == None:
+	# 		print('Discri_dict not jet computed')
 
-		else:
-			evaluation_object = eval_pred_rule.eval_rule(
-				prediction_rule,
-				rule_name,
-				eval_type,
-				self.pred_eval,
-				self.discri_dict, 
-				**kwargs)
+	# 	else:
+	# 		evaluation_object = eval_pred_rule.eval_rule(
+	# 			prediction_rule,
+	# 			rule_name,
+	# 			eval_type,
+	# 			self.pred_eval,
+	# 			self.discri_dict, 
+	# 			**kwargs)
 
-			evaluation_object.create_eval_data()
-			print((evaluation_object.storage + ' data created'))
-			pickle.dump(evaluation_object, open(
-				evaluation_object.storage + '.eval', "wb"))
-			print((evaluation_object.storage + '.eval created'))
+	# 		evaluation_object.create_eval_data()
+	# 		print((evaluation_object.storage + ' data created'))
+	# 		pickle.dump(evaluation_object, open(
+	# 			evaluation_object.storage + '.eval', "wb"))
+	# 		print((evaluation_object.storage + '.eval created'))
 
-	def load_prediction_rule_evaluations(self):
+	# def load_prediction_rule_evaluations(self):
 
-		'''
-		loads all evaluation object, can be used for score comparison
-		'''
+	# 	'''
+	# 	loads all evaluation object, can be used for score comparison
+	# 	'''
 
-		if len(os.listdir(self.pred_eval)) == 0:
-			print(('no prediction rules computed in ' + self.pred_eval))
+	# 	if len(os.listdir(self.pred_eval)) == 0:
+	# 		print(('no prediction rules computed in ' + self.pred_eval))
 
-		else:
+	# 	else:
 
-			for file in os.listdir(self.pred_eval):
-				if '.eval' in file:
-					eval_path = os.path.join(self.pred_eval, file)
-					evaluation = pickle.load(open(eval_path, "rb"))
-					self.prediction_rules_eval[
-						file.replace('.eval', '')] = evaluation
+	# 		for file in os.listdir(self.pred_eval):
+	# 			if '.eval' in file:
+	# 				eval_path = os.path.join(self.pred_eval, file)
+	# 				evaluation = pickle.load(open(eval_path, "rb"))
+	# 				self.prediction_rules_eval[
+	# 					file.replace('.eval', '')] = evaluation
