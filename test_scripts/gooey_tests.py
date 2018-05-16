@@ -33,10 +33,10 @@ def main():
 	# should work on any system
 	########################################
 
-	tmp = tempfile.NamedTemporaryFile()
+	tmp = tempfile.NamedTemporaryFile(mode = 'w', delete=False)
 
-	with open(tmp.name, 'w') as temp:
-		temp.write(args.input)
+	# with open(tmp.name, 'w') as temp:
+	tmp.write(args.input)
 
 	PYTHON_PATH = sys.executable
 	process = Popen([PYTHON_PATH, 'spawn_next.py', tmp.name], stdout=PIPE, stderr=PIPE)
