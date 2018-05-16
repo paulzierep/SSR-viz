@@ -137,8 +137,6 @@ def export2jalview(df, annot = '', path = None):
 		jal_file.write(init_text)
 
 
-
-
 #######################################
 # cons diff algos
 #######################################
@@ -564,12 +562,19 @@ def df2pssm_visual(df, path=None,
 
 		# #get the all vs all dataframe
 		# print(kwargs['hm_ava'])
-	if basic.check_dict_key_not_none(kwargs, 'hm_ava'):
-		if kwargs['hm_ava'] == False:
-			df_na = df[(df.index.get_level_values('Class_A') == 'all')]
-			all_df_list.append(df_na)
+	if not kwargs['no_hm_ava']:
+		df_na = df[(df.index.get_level_values('Class_A') == 'all')]
+		all_df_list.append(df_na)
 
-	df_heatmap = pd.concat(all_df_list)
+	if not all_df_list:
+		print('''There are no values given for the heatmap, 
+			please add at least the all-vs-all representation by unchecking the 
+			hm_ava tick
+			''')
+		exit()
+
+	else:
+		df_heatmap = pd.concat(all_df_list)
 
 	###########################
 	# Arguments for the plot
@@ -609,12 +614,19 @@ def df2pssm_visual(df, path=None,
 			all_df_list.append(hm_all_df)
 
 	#get the all vs all dataframe
-	if basic.check_dict_key_not_none(kwargs, 'pl_ava'):
-		if kwargs['pl_ava'] == True:
-			df_na = df[(df.index.get_level_values('Class_A') == 'all')]
-			all_df_list.append(df_na)
+	if not kwargs['no_pl_ava']:
+		df_na = df[(df.index.get_level_values('Class_A') == 'all')]
+		all_df_list.append(df_na)
 
-	df_plot = pd.concat(all_df_list)
+	if not all_df_list:
+		print('''There are no values given for the plot, 
+			please add at least the all-vs-all representation by unchecking the 
+			pl_ava tick
+			''')
+		exit()
+
+	else:
+		df_plot = pd.concat(all_df_list)
 
 	###########################
 	# Special arguments for the plot

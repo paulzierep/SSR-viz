@@ -21,6 +21,7 @@ if not sys.warnoptions:
 from prediction_rules.main_pred import pred_rule
 
 
+
 from gooey import Gooey
 from gooey import GooeyParser
 
@@ -184,7 +185,7 @@ def main():
 	parser.add_argument(
 						'-no_hm_ava', '--heatmal_ava',
 						action='store_true',
-						dest = 'hm_ava',
+						dest = 'no_hm_ava',
 						default = False,
 						help='Remove all vs all representation in the heatmap'
 						)
@@ -192,11 +193,12 @@ def main():
 
 	parser.add_argument(
 						'-no_pl_ava', '---plot_ava',
-						action='store_false',
-						dest = 'pl_ava',
+						action='store_true',
+						dest = 'no_pl_ava',
 						default = False,
 						help='Remove all vs all representation in the plot'
 						)
+
 
 	parser.add_argument('-hm_all', 
 						nargs='*', 
@@ -300,8 +302,8 @@ def main():
 										# until here basic infos
 										#then plot specific infos
 										get_best = int(args.best),
-										hm_ava = args.hm_ava,
-										pl_ava = args.pl_ava,
+										no_hm_ava = args.no_hm_ava,
+										no_pl_ava = args.no_pl_ava,
 										hm_all = args.hm_all,
 										pl_all = args.pl_all,
 										hm_ova = args.hm_ova,

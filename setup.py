@@ -1,6 +1,6 @@
 import sys
-from cx_Freeze import setup, Executable
-
+#from cx_Freeze import setup, Executable
+from distutils.core import setup
 # get the gooey figs and lang
 
 import os
@@ -36,8 +36,11 @@ if sys.platform == "win32":
 
 #additional_mods = ['numpy.core._methods', 'numpy.lib.format']
 
-setup(  name = "build_csv",
+setup(  name = "diff-PSSM",
         version = "0.1",
         description = "Build CSV GUI application",
         options = {"build_exe": build_exe_options},
-        executables = [Executable("build_csv_gui.py", base=base), Executable("plot_dpssm_gui.py", base=base)])
+        url = 'http://www.pharmazeutische-bioinformatik.de/',
+        author='Paul Zierep',
+      	author_email='Paul.Zierep@googlemail.com',)
+        #executables = [Executable("build_csv_gui.py", base=base), Executable("plot_dpssm_gui.py", base=base)])

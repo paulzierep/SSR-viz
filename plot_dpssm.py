@@ -162,13 +162,6 @@ def main():
 						default = None,
 						)
 
-	# parser.add_argument('-jvhm','--jv_heatmap', 
-	# 					help='''Creates an jalview annotation file from the heatmap''',
-	# 					action='store_true',
-	# 					dest = 'jv_heatmap',
-	# 					default = None,
-	# 					)
-
 	parser.add_argument(
 						'-no_cl_hm', '--no_class_label_heatmap',
 						action='store_true',
@@ -180,18 +173,18 @@ def main():
 
 	parser.add_argument(
 						'-no_hm_ava', '--heatmal_ava',
-						action='store_false',
-						dest = 'hm_ava',
-						default = True,
+						action='store_true',
+						dest = 'no_hm_ava',
+						default = False,
 						help='Remove all vs all representation in the heatmap'
 						)
 
 
 	parser.add_argument(
 						'-no_pl_ava', '---plot_ava',
-						action='store_false',
-						dest = 'pl_ava',
-						default = True,
+						action='store_true',
+						dest = 'no_pl_ava',
+						default = False,
 						help='Remove all vs all representation in the plot'
 						)
 
@@ -206,9 +199,6 @@ def main():
 	parser.add_argument('-hm_ova', nargs='*', help='One vs all classes for the heatmap (use the class labels as arguments to only show these classes) Example -hm_ova class_A',dest = 'hm_ova', default = None)
 	parser.add_argument('-pl_all', nargs='*', help='All vs all classes for the plot (use the class labels as arguments to only show these classes) Example -pl_all class_A class_B', dest = 'pl_all', default = None)
 	parser.add_argument('-pl_ova', nargs='*', help='One vs all classes for the plot (use the class labels as arguments to only show these classes) Example -pl_ova class_A', dest = 'pl_ova', default = None)
-
-
-
 
 
 	args = parser.parse_args()
@@ -298,8 +288,8 @@ def main():
 										# until here basic infos
 										#then plot specific infos
 										get_best = int(args.best),
-										hm_ava = args.hm_ava,
-										pl_ava = args.pl_ava,
+										no_hm_ava = args.no_hm_ava,
+										no_pl_ava = args.no_pl_ava,
 										hm_all = args.hm_all,
 										pl_all = args.pl_all,
 										hm_ova = args.hm_ova,
