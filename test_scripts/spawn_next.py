@@ -1,5 +1,6 @@
 from gooey import Gooey
 from gooey import GooeyParser
+import sys
 
 @Gooey()
 def main():
@@ -12,11 +13,11 @@ def main():
 	parser.add_argument(
 						'-i', '--input',
 						required=False,
-						dest = 'csv',
+						default = sys.argv[1],
+						dest = 'input',
 						help='Test_file',
 						widget='FileChooser',
 						)
-
 
 	args = parser.parse_args()
 
