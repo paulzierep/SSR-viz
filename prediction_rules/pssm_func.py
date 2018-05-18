@@ -239,8 +239,6 @@ def conservation_scores(df1, df2, sub_matrix = None, cons_type = 'entropy'):
 	cons_score = (cons1 + cons2) / 2                                            #both sequences are considered, normalized to 1
 
 
-
-
 	#########################
 	# entropy
 	#########################
@@ -507,9 +505,40 @@ def add_all_vs_all(df):
 	return(final_df)
 
 
-def df2pssm_visual(df, path=None,
-				 **kwargs):
+def df2pssm_visual(df = None, 
+					path=None,
+					hm_ovo = None,
+					hm_ova = None,
+					pl_ovo = None,
+					pl_ova = None,
+					no_hm_ava = False,
+					no_pl_ava = False,
+					window = None,
+					window_type = 'mean',
+					figsize = (29.7, 21.0),
+					chunksize = 100,
+					fontsize = 8,
+					w_ratio = (1, 1),
+					tick_ratio = 5,
+					jv_plot = True,
+					top_label = False,
+					drop_class_label = False,
+				 	**kwargs):
 
+	################
+	#todo doulbe check this set-up !!
+	################
+
+	del locals()['kwargs']
+	kwargs = {**kwargs, **locals()} #kwargs overwriting the default args and merged
+	del kwargs['df']
+	del kwargs['kwargs']
+
+
+
+	####################################
+	# Handle the kwargs
+	####################################
 
 	#most alignemnt tools start with 1 instead of 0, so this can be changed
 	if 'alignment_index' in kwargs.keys():
@@ -531,15 +560,15 @@ def df2pssm_visual(df, path=None,
 	all_df_list = []
 
 	#get the all vs all dataframes
-	if basic.check_dict_key_not_none(kwargs, 'hm_all'):
+	if kwargs['hm_ovo']:
 
-		if kwargs['hm_all'] == []: #if not specified all are taken
-			kwargs['hm_all'] = optional_classes
+		if kwargs['hm_ovo'] == []: #if not specified all are taken
+			kwargs['hm_ovo'] = optional_classes
 
 		df_na = df[(df.index.get_level_values('Class_A') != 'all')]
 		df_na = df_na[(df_na.index.get_level_values('Class_B') != 'all')]
 
-		class2drop = [x for x in optional_classes if x not in kwargs['hm_all']] #drop all classes, which are not present 
+		class2drop = [x for x in optional_classes if x not in kwargs['hm_ovo']] #drop all classes, which are not present 
 
 		for clas in class2drop:
 			row2drop = df_na.loc[(df_na.index.get_level_values('Class_A') == clas) | (df_na.index.get_level_values('Class_B') == clas)].index
@@ -548,7 +577,7 @@ def df2pssm_visual(df, path=None,
 		all_df_list.append(df_na)
 
 	#get the one vs all dataframes
-	if basic.check_dict_key_not_none(kwargs, 'hm_ova'):
+	if kwargs['hm_ova']:
 		if kwargs['hm_ova'] == []:
 			kwargs['hm_ova'] = optional_classes
 
@@ -584,14 +613,14 @@ def df2pssm_visual(df, path=None,
 	all_df_list = []
 
 	#get the all vs all dataframes
-	if basic.check_dict_key_not_none(kwargs, 'pl_all'):
-		if kwargs['pl_all'] == []: #if not specified all are taken
-			kwargs['pl_all'] = optional_classes
+	if kwargs['pl_ovo']:
+		if kwargs['pl_ovo'] == []: #if not specified all are taken
+			kwargs['pl_ovo'] = optional_classes
 
 		df_na = df[(df.index.get_level_values('Class_A') != 'all')]
 		df_na = df_na[(df_na.index.get_level_values('Class_B') != 'all')]
 
-		class2drop = [x for x in optional_classes if x not in kwargs['pl_all']]
+		class2drop = [x for x in optional_classes if x not in kwargs['pl_ovo']]
 
 		for clas in class2drop:
 			row2drop = df_na.loc[(df_na.index.get_level_values('Class_A') == clas) | (df_na.index.get_level_values('Class_B') == clas)].index
@@ -601,7 +630,7 @@ def df2pssm_visual(df, path=None,
 
 	#get the one vs all dataframes
 
-	if basic.check_dict_key_not_none(kwargs, 'pl_ova'):
+	if kwargs['pl_ova']:
 		if kwargs['pl_ova'] == []:
 			kwargs['pl_ova'] = optional_classes
 
@@ -632,13 +661,9 @@ def df2pssm_visual(df, path=None,
 	# Special arguments for the plot
 	###########################
 
-	if basic.check_dict_key_not_none(kwargs, 'window'):
+	if kwargs['window']:
 		window =  int(kwargs['window'])
-
-		if basic.check_dict_key_not_none(kwargs, 'window_type'):
-			window_type =  kwargs['window_type']
-		else:
-			window_type = 'mean'
+		window_type =  kwargs['window_type']
 
 		if window_type == 'mean':
 
@@ -670,6 +695,10 @@ def df2pssm_visual(df, path=None,
 		df_plot.set_index('Window', append=True, inplace=True)
 
 
+	##########################################
+	# Best or lowest positions handling
+	##########################################
+
 	def drop_lowest(row, num):
 		if row.name[2]:
 			return(row)
@@ -699,43 +728,23 @@ def df2pssm_visual(df, path=None,
 	# Plot options
 	###########################
 
-	if basic.check_dict_key_not_none(kwargs, 'figsize'):
-		figsize = (float(kwargs['figsize'][0]), float(kwargs['figsize'][1]))
-	else:
-		figsize = (29.7, 21.0)
+	figsize = (float(kwargs['figsize'][0]), float(kwargs['figsize'][1]))
 
-	#print(figsize)
-	# print(kwargs['chunksize'])
-
-	if  basic.check_dict_key_not_none(kwargs, 'chunksize'):
-		
-		if kwargs['chunksize'] == 'total':
-			chunksize = len(df.columns)
-		else:
-			chunksize = int(kwargs['chunksize'])
+	if kwargs['chunksize'] == 'total':
+		chunksize = len(df.columns)
 	else:
-		chunksize = 100
+		chunksize = int(kwargs['chunksize'])
 
-	if basic.check_dict_key_not_none(kwargs, 'fontsize'):
-		fontsize = kwargs['fontsize']
-	else:
-		fontsize = 8
+	fontsize = kwargs['fontsize']
+	w_ratio = (float(kwargs['w_ratio'][0]), float(kwargs['w_ratio'][1]))
+	tick_ratio = int(kwargs['tick_ratio'])
 
-	if basic.check_dict_key_not_none(kwargs, 'w_ratio'):
-		w_ratio = (float(kwargs['w_ratio'][0]), float(kwargs['w_ratio'][1]))
-	else:
-		w_ratio = (1, 3)
-
-	if basic.check_dict_key_not_none(kwargs, 'tick_ratio'):
-		tick_ratio = int(kwargs['tick_ratio'])
-	else:
-		tick_ratio = 5
 
 	######################
 	# Create plots for Jalview
 	######################
 
-	if basic.check_dict_key_true(kwargs, 'jv_plot'):
+	if kwargs['jv_plot']:
 		jv_path = path + '_jv_plot.txt'
 		export2jalview(df_plot, annot = 'plot', path = jv_path)
 
@@ -762,7 +771,7 @@ def df2pssm_visual(df, path=None,
 		#print(df_heatmap)
 
 		#get a fig object, an ax for the plot, another for the heatmap
-		if basic.check_dict_key_true(kwargs, 'top_label'):
+		if kwargs['top_label']:
 			fig, (ax_label, ax, ax2) = plt.subplots(3,1, gridspec_kw = {'height_ratios':[0.25,w_ratio[0],w_ratio[1]]}, figsize=(cm2inch(figsize[0]), cm2inch(figsize[1])))
 		else:
 			fig, (ax, ax2) = plt.subplots(2,1, gridspec_kw = {'height_ratios':[w_ratio[0],w_ratio[1]]}, figsize=(cm2inch(figsize[0]), cm2inch(figsize[1])))
@@ -809,7 +818,7 @@ def df2pssm_visual(df, path=None,
 
 		handles, labels = ax.get_legend_handles_labels()
 
-		if basic.check_dict_key_true(kwargs, 'top_label'):
+		if kwargs['top_label']:
 			ax_label.legend(handles, plot_labels, loc='upper center', ncol = 7, fontsize = fontsize)
 			ax_label.axis('off')
 
@@ -840,7 +849,7 @@ def df2pssm_visual(df, path=None,
 
 		ticks_range = np.arange(0.5, len(df_heatmap.index), 1)
 
-		if basic.check_dict_key_true(kwargs, 'drop_class_label'):
+		if kwargs['drop_class_label']:
 			ax2.set_yticks([np.mean(ticks_range)])
 			ax2.set_yticklabels(['-'], fontsize = fontsize)
 
@@ -880,15 +889,15 @@ def df2pssm_visual(df, path=None,
 	ax2.axis('off')
 
 	#create a options text for the top plot
-	kwargs2scip = ['keep_data_folder','no_rule','no_alignment','visual','command_line']
+	#kwargs2scip = ['keep_data_folder','no_rule','no_alignment','visual','command_line']
 	kwargs_txt = ''
 	i = 1
 	for key, item in list(kwargs.items()):
-		if item and key not in kwargs2scip:
-			kwargs_txt += key + ' : ' + str(item) + '    '
-			if i % 4 == 0:
-				kwargs_txt += '\n'
-			i += 1
+		#if item and key not in kwargs2scip:
+		kwargs_txt += key + ' : ' + str(item) + '    '
+		if i % 4 == 0:
+			kwargs_txt += '\n'
+		i += 1
 
 	# if basic.check_dict_key_not_none(kwargs, 'command_line'):
 	# 	command_line = kwargs['command_line']

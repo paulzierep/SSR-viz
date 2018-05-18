@@ -118,111 +118,111 @@ class rule_object():
 		pass
 
 
-class ML_rule(rule_object):
+# class ML_rule(rule_object):
 
-	'''
-	the tree class convertes a seqeunce alignment into the onehotencoder format, which can be used to create a decicion tree, 
-	th format is needed as the sklearn algorithm can only work with true and false classification.
-	onehotencoder example:
+# 	'''
+# 	the tree class convertes a seqeunce alignment into the onehotencoder format, which can be used to create a decicion tree, 
+# 	th format is needed as the sklearn algorithm can only work with true and false classification.
+# 	onehotencoder example:
 	
-	ABCCC-->
-	A=1, B=0, C=0 ; A=0, B=1, C=0 ; A=0, B=0, C=1 ; A=1, B=0, C=1 ; A=1, B=0, C=1
-	'''
+# 	ABCCC-->
+# 	A=1, B=0, C=0 ; A=0, B=1, C=0 ; A=0, B=0, C=1 ; A=1, B=0, C=1 ; A=1, B=0, C=1
+# 	'''
 
-	def create_prediction_data(self, discri_dict, **kwargs):
+# 	def create_prediction_data(self, discri_dict, **kwargs):
 
-		'''creates all the needed files for the prediction and initiates the prediction object, which is stored as pickle object'''
+# 		'''creates all the needed files for the prediction and initiates the prediction object, which is stored as pickle object'''
 
-		graph, clf = dict2tree(discri_dict, **kwargs) #main tree function
-		if graph:
-			graph.write_pdf(os.path.join(self.rule_data_storage , 'entropy.pdf')) #graphical output
+# 		graph, clf = dict2tree(discri_dict, **kwargs) #main tree function
+# 		if graph:
+# 			graph.write_pdf(os.path.join(self.rule_data_storage , 'entropy.pdf')) #graphical output
 
-		self.clf = clf #store the classifyer object in this object
+# 		self.clf = clf #store the classifyer object in this object
 
-		if basic.check_dict_key_true(kwargs, 'plot_feature_importance'):
-			print(list(clf.feature_importances_)) #todo get feature names !!!!
+# 		if basic.check_dict_key_true(kwargs, 'plot_feature_importance'):
+# 			print(list(clf.feature_importances_)) #todo get feature names !!!!
 
-		self.store_alignment(discri_dict)
+# 		self.store_alignment(discri_dict)
 
-	def predict_sequence(self, seq_path, detail = False, **kwargs):
+# 	def predict_sequence(self, seq_path, detail = False, **kwargs):
 
-		#call the seq alignment method to create an alignment for the test sequence to the rule alignment
-		self.align_seq(seq_path)
+# 		#call the seq alignment method to create an alignment for the test sequence to the rule alignment
+# 		self.align_seq(seq_path)
 
-		OneHotEncoder = seq2OneHotEncoder(self.test_seq_aligned) #create a hotencoder for the seq
+# 		OneHotEncoder = seq2OneHotEncoder(self.test_seq_aligned) #create a hotencoder for the seq
 
-		best_match = self.clf.predict([OneHotEncoder])[0] #predict the sequence
+# 		best_match = self.clf.predict([OneHotEncoder])[0] #predict the sequence
 
-		#print(best_match)
-		probability = self.clf.predict_proba([OneHotEncoder])[0]
-		#print(probability)
-		classes_ordered = (self.clf.classes_) #classes as ordered in the tree object
-		#print(classes_ordered)
+# 		#print(best_match)
+# 		probability = self.clf.predict_proba([OneHotEncoder])[0]
+# 		#print(probability)
+# 		classes_ordered = (self.clf.classes_) #classes as ordered in the tree object
+# 		#print(classes_ordered)
 
-		result_dict = {} #here more details for the tree could be implemented
-		index = 0
-		for num in probability:
-			result_dict[classes_ordered[index]] = num
-			index += 1
+# 		result_dict = {} #here more details for the tree could be implemented
+# 		index = 0
+# 		for num in probability:
+# 			result_dict[classes_ordered[index]] = num
+# 			index += 1
 
-		if detail == True:
-			return(best_match, result_dict)
-		else:
-			return(best_match)
+# 		if detail == True:
+# 			return(best_match, result_dict)
+# 		else:
+# 			return(best_match)
 
 
 
-class tree_rule(rule_object):
+# class tree_rule(rule_object):
 
-	'''
-	the tree class convertes a seqeunce alignment into the onehotencoder format, which can be used to create a decicion tree, 
-	th format is needed as the sklearn algorithm can only work with true and false classification.
-	onehotencoder example:
+# 	'''
+# 	the tree class convertes a seqeunce alignment into the onehotencoder format, which can be used to create a decicion tree, 
+# 	th format is needed as the sklearn algorithm can only work with true and false classification.
+# 	onehotencoder example:
 	
-	ABCCC-->
-	A=1, B=0, C=0 ; A=0, B=1, C=0 ; A=0, B=0, C=1 ; A=1, B=0, C=1 ; A=1, B=0, C=1
-	'''
+# 	ABCCC-->
+# 	A=1, B=0, C=0 ; A=0, B=1, C=0 ; A=0, B=0, C=1 ; A=1, B=0, C=1 ; A=1, B=0, C=1
+# 	'''
 
-	def create_prediction_data(self, discri_dict, **kwargs):
+# 	def create_prediction_data(self, discri_dict, **kwargs):
 
-		'''creates all the needed files for the prediction and initiates the prediction object, which is stored as pickle object'''
+# 		'''creates all the needed files for the prediction and initiates the prediction object, which is stored as pickle object'''
 
-		graph, clf = dict2tree(discri_dict, **kwargs) #main tree function
-		if graph:
-			graph.write_pdf(os.path.join(self.rule_data_storage , 'entropy.pdf')) #graphical output
+# 		graph, clf = dict2tree(discri_dict, **kwargs) #main tree function
+# 		if graph:
+# 			graph.write_pdf(os.path.join(self.rule_data_storage , 'entropy.pdf')) #graphical output
 
-		self.clf = clf #store the classifyer object in this object
+# 		self.clf = clf #store the classifyer object in this object
 
-		if basic.check_dict_key_true(kwargs, 'plot_feature_importance'):
-			print(list(clf.feature_importances_)) #todo get feature names !!!!
+# 		if basic.check_dict_key_true(kwargs, 'plot_feature_importance'):
+# 			print(list(clf.feature_importances_)) #todo get feature names !!!!
 
-		self.store_alignment(discri_dict)
+# 		self.store_alignment(discri_dict)
 
-	def predict_sequence(self, seq_path, detail = False, **kwargs):
+# 	def predict_sequence(self, seq_path, detail = False, **kwargs):
 
-		#call the seq alignment method to create an alignment for the test sequence to the rule alignment
-		self.align_seq(seq_path)
+# 		#call the seq alignment method to create an alignment for the test sequence to the rule alignment
+# 		self.align_seq(seq_path)
 
-		OneHotEncoder = seq2OneHotEncoder(self.test_seq_aligned) #create a hotencoder for the seq
+# 		OneHotEncoder = seq2OneHotEncoder(self.test_seq_aligned) #create a hotencoder for the seq
 
-		best_match = self.clf.predict([OneHotEncoder])[0] #predict the sequence
+# 		best_match = self.clf.predict([OneHotEncoder])[0] #predict the sequence
 
-		#print(best_match)
-		probability = self.clf.predict_proba([OneHotEncoder])[0]
-		#print(probability)
-		classes_ordered = (self.clf.classes_) #classes as ordered in the tree object
-		#print(classes_ordered)
+# 		#print(best_match)
+# 		probability = self.clf.predict_proba([OneHotEncoder])[0]
+# 		#print(probability)
+# 		classes_ordered = (self.clf.classes_) #classes as ordered in the tree object
+# 		#print(classes_ordered)
 
-		result_dict = {} #here more details for the tree could be implemented
-		index = 0
-		for num in probability:
-			result_dict[classes_ordered[index]] = num
-			index += 1
+# 		result_dict = {} #here more details for the tree could be implemented
+# 		index = 0
+# 		for num in probability:
+# 			result_dict[classes_ordered[index]] = num
+# 			index += 1
 
-		if detail == True:
-			return(best_match, result_dict)
-		else:
-			return(best_match)
+# 		if detail == True:
+# 			return(best_match, result_dict)
+# 		else:
+# 			return(best_match)
 
 # class pssm_rule(rule_object):
 
@@ -315,26 +315,27 @@ class pssm_rule_new(rule_object):
 
 			# optional plot name for pssm rule
 			if 'plot_name' in kwargs:
+				if not '.pdf' in kwargs['plot_name']: #add .pdf if not specified
+					kwargs['plot_name'] += '.pdf'
 				visual_path = os.path.join(self.rule_data_storage, kwargs['plot_name'])
 			else:
-				visual_path = os.path.join(self.rule_data_storage, 'temp_visual')
-
-			# if kwargs.has_key('only_class'):
-			# 	only_class = kwargs['only_class']
-			# 	df = pssm_func.slice_class_of_df(df, only_class)
-
+				visual_path = os.path.join(self.rule_data_storage, 'temp_visual.pdf')
 
 			df = pssm_func.add_all_vs_all(df) 										#compute the average for a nicer plot
 
-
 			# do not remove old plot by default
-			if basic.check_dict_key_true(kwargs, 'keep_plot'):
+			print(kwargs['delete_plot'])
+			if basic.check_dict_key_true(kwargs, 'delete_plot'):
+				if basic.create_file(visual_path, remove = True):
+					pssm_func.df2pssm_visual(df = df, path = visual_path, **kwargs)
+			else:
 				if not basic.create_file(visual_path, remove = False):
 					print('Plot not created, chose different plot name, please !')
 				else:
-					pssm_func.df2pssm_visual(df, path = visual_path, **kwargs)
-			else:
-				pssm_func.df2pssm_visual(df, path = visual_path, **kwargs)
+					pssm_func.df2pssm_visual(df = df, path = visual_path, **kwargs)
+					
+			# else:
+			# 	pssm_func.df2pssm_visual(df = df, path = visual_path, **kwargs)
 
 		# if basic.check_dict_key_true(kwargs, 'visual'):
 		# 	visual_path = os.path.join(self.rule_data_storage, 'temp_visual.svg')
@@ -369,93 +370,93 @@ class pssm_rule_new(rule_object):
 
 
 
-class hmmer_rule(rule_object):
-	'''class for the hmmer prediction rules, the design is intended, so that a new sequence is used as input and prediction is given as output
-	the objects are stored as pickle object'''
+# class hmmer_rule(rule_object):
+# 	'''class for the hmmer prediction rules, the design is intended, so that a new sequence is used as input and prediction is given as output
+# 	the objects are stored as pickle object'''
 
-	def create_prediction_data(self, discri_dict, **p_kwargs):
+# 	def create_prediction_data(self, discri_dict, **p_kwargs):
 
-		'''creates all the needed files for the prediction and initiates the prediction object, which is stored as pickle object'''
+# 		'''creates all the needed files for the prediction and initiates the prediction object, which is stored as pickle object'''
 
-		for discri in discri_dict:
+# 		for discri in discri_dict:
 
-			align_output = os.path.join(self.rule_data_storage , str(discri) + '.fasta')
-			hmmer_output = os.path.join(self.rule_data_storage , str(discri) + '.hmm')
-			#print hmmer_output
+# 			align_output = os.path.join(self.rule_data_storage , str(discri) + '.fasta')
+# 			hmmer_output = os.path.join(self.rule_data_storage , str(discri) + '.hmm')
+# 			#print hmmer_output
 
-			align1 = MultipleSeqAlignment(discri_dict[discri])
-			SeqIO.write(align1, align_output, "fasta")
+# 			align1 = MultipleSeqAlignment(discri_dict[discri])
+# 			SeqIO.write(align1, align_output, "fasta")
 
-			domain_extractor.hmm_build(align_output, hmmer_output)
+# 			domain_extractor.hmm_build(align_output, hmmer_output)
 
-		self.store_alignment(discri_dict)
+# 		self.store_alignment(discri_dict)
 
-	def predict_sequence(self, seq_path, detail = False, **kwargs):
+# 	def predict_sequence(self, seq_path, detail = False, **kwargs):
 
-		'''Performes a hmmer search for each of the hmmer files. Returns the best ranked result.'''
+# 		'''Performes a hmmer search for each of the hmmer files. Returns the best ranked result.'''
 
-		if 'domT_threshold' in kwargs:
-			domT_threshold = kwargs['domT_threshold']
-		else:
-			domT_threshold = 10
-
-
-		self.align_seq(seq_path)
-
-		result_dict = {}
-		for file in os.listdir(self.rule_data_storage):
-
-			if '.hmm' in file:
-
-				hmm_file_path = os.path.join(self.rule_data_storage, file)
-				hmm_search_path = os.path.join(self.rule_data_storage, file.replace('.hmm', '.search'))
-
-				sub_report = subprocess.Popen('hmmsearch --domT={3} {0} {1} > {2}'.format(hmm_file_path, 
-											self.test_seq_aligned_path,
-											hmm_search_path,
-											domT_threshold), 
-											shell=True, 
-											stdout=subprocess.PIPE, 
-											stderr=subprocess.PIPE).communicate()
-				if sub_report != ('',''):
-					print(sub_report)
-
-				record = SearchIO.read(hmm_search_path, "hmmer3-text")
-
-				if len(record) > 1:
-					print('Multiple record error !! for ' + file)
-					exit()
-
-				elif len(record) == 0:
-					print('No record found, set score to 0')
-					bitscore = 0
-					result_dict[file.replace('.hmm', '')] = bitscore
-
-				else:
-					for rec in record:
-						if len(rec) != 1:
-							print('Multiple matches found, scores will be combined!!')
-
-						bitscore_sum = [] 	#if there are multiple matches, this is due to a long gap (assuming that the seq. was preprocessed), therefore in this case
-											# the scores are summed up
-						for match in rec:
-							bitscore_sum.append(match.bitscore)
-
-						bitscore = sum(bitscore_sum)
-						result_dict[file.replace('.hmm', '')] = bitscore
-
-		#print result_dict
+# 		if 'domT_threshold' in kwargs:
+# 			domT_threshold = kwargs['domT_threshold']
+# 		else:
+# 			domT_threshold = 10
 
 
-		max_score = max(result_dict.values()) #get the best match
-		for match in result_dict:
-			if result_dict[match] == max_score:
-				best_match = match
+# 		self.align_seq(seq_path)
 
-		if detail == True:
-			return(best_match, result_dict)
-		else:
-			return(best_match)
+# 		result_dict = {}
+# 		for file in os.listdir(self.rule_data_storage):
+
+# 			if '.hmm' in file:
+
+# 				hmm_file_path = os.path.join(self.rule_data_storage, file)
+# 				hmm_search_path = os.path.join(self.rule_data_storage, file.replace('.hmm', '.search'))
+
+# 				sub_report = subprocess.Popen('hmmsearch --domT={3} {0} {1} > {2}'.format(hmm_file_path, 
+# 											self.test_seq_aligned_path,
+# 											hmm_search_path,
+# 											domT_threshold), 
+# 											shell=True, 
+# 											stdout=subprocess.PIPE, 
+# 											stderr=subprocess.PIPE).communicate()
+# 				if sub_report != ('',''):
+# 					print(sub_report)
+
+# 				record = SearchIO.read(hmm_search_path, "hmmer3-text")
+
+# 				if len(record) > 1:
+# 					print('Multiple record error !! for ' + file)
+# 					exit()
+
+# 				elif len(record) == 0:
+# 					print('No record found, set score to 0')
+# 					bitscore = 0
+# 					result_dict[file.replace('.hmm', '')] = bitscore
+
+# 				else:
+# 					for rec in record:
+# 						if len(rec) != 1:
+# 							print('Multiple matches found, scores will be combined!!')
+
+# 						bitscore_sum = [] 	#if there are multiple matches, this is due to a long gap (assuming that the seq. was preprocessed), therefore in this case
+# 											# the scores are summed up
+# 						for match in rec:
+# 							bitscore_sum.append(match.bitscore)
+
+# 						bitscore = sum(bitscore_sum)
+# 						result_dict[file.replace('.hmm', '')] = bitscore
+
+# 		#print result_dict
+
+
+# 		max_score = max(result_dict.values()) #get the best match
+# 		for match in result_dict:
+# 			if result_dict[match] == max_score:
+# 				best_match = match
+
+# 		if detail == True:
+# 			return(best_match, result_dict)
+# 		else:
+# 			return(best_match)
 
 
 def seq2OneHotEncoder(sequence):
@@ -608,8 +609,8 @@ def dict2tree(discri_dict, **kwargs):
 def prediction_dispatcher(name):
 	'''returns the function corresponding to the name, new prediction functions must be registered here'''
 	prediction_dict = {
-						'hmmer': hmmer_rule,
-						'tree': tree_rule,
+						#'hmmer': hmmer_rule,
+						#'tree': tree_rule,
 						#'pssm': pssm_rule,
 						'pssm_new': pssm_rule_new,
 						'test': lambda discri_dict, output: print(discri_dict, output),
