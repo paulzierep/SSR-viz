@@ -55,7 +55,7 @@ def main():
 	default_args = load_default_args()
 
 	parser = GooeyParser(
-		description='''Creates the differnce pssm plot, based on the class_label.csv file and the converted alignmet file''')
+		description='''Creates the subfamily specific position plot, based on the class_label.csv file and the converted alignment file''')
 
 	# parser.add_argument(
 	# 					'-i', '--input-csv',
@@ -152,13 +152,13 @@ for all possibilites''',
 					)
 
 	fig_opts_g.add_argument('-fs_h','--fig_size_h', 
-						help='''Figsize hight''',
+						help='''Figsize hight (Default: 29.7) [cm]''',
 						dest = 'fs_h',
 						default = 29.7,
 						)
 
 	fig_opts_g.add_argument('-fs_w','--fig_size_w', 
-					help='''Figsize width''',
+					help='''Figsize width (Default: 21.0) [cm]''',
 					dest = 'fs_w',
 					default = 21.0,
 					)
@@ -233,7 +233,7 @@ for all possibilites''',
 	plot_opts_g.add_argument('-wt','--window_type', 
 						help='Type of the window function to apply (default: mean), other are: max, min, std',
 						dest = 'win_t',
-						default = None,
+						default = 'mean',
 						)
 
 	plot_opts_g.add_argument(

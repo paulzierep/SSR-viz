@@ -324,7 +324,9 @@ class pssm_rule_new(rule_object):
 			df = pssm_func.add_all_vs_all(df) 										#compute the average for a nicer plot
 
 			# do not remove old plot by default
-			print(kwargs['delete_plot'])
+			#print(kwargs['delete_plot'])
+
+			#tested
 			if basic.check_dict_key_true(kwargs, 'delete_plot'):
 				if basic.create_file(visual_path, remove = True):
 					pssm_func.df2pssm_visual(df = df, path = visual_path, **kwargs)

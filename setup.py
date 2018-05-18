@@ -43,4 +43,4 @@ setup(  name = "diff-PSSM",
         url = 'http://www.pharmazeutische-bioinformatik.de/',
         author='Paul Zierep',
       	author_email='Paul.Zierep@googlemail.com',)
-        #executables = [Executable("build_csv_gui.py", base=base), Executable("plot_dpssm_gui.py", base=base)])
+        executables = [Executable("build_csv_gui.py", base=base), Executable("plot_dpssm_gui.py", base=base)])

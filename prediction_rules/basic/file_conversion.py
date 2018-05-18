@@ -166,8 +166,10 @@ def fasta2DNA_fasta(INPUT_FILE_PATH, CONVERTED_INPUT_PATH):
 def fasta_check(INPUT_FILE_PATH):
 	'''checks if a fasta file is an alignment or raw dna, if it is raw dna it checks if all entries have the same size.'''
 
-	bad_signes = ['|', '/', '(', ')'] #some signes are not good input, so they are raplaced.
+	#bad_signes = ['|', '/', '(', ')'] #some signes are not good input, so they are raplaced.
 	# '(', ')' due to mafft handling
+
+	bad_signes = [] #here no sign conversion is needed
 
 	records = list(SeqIO.parse(INPUT_FILE_PATH, "fasta"))
 	all_records = ''.join([str(sequence.seq) for sequence in records]) #a text file with all the records
@@ -179,17 +181,9 @@ def fasta_check(INPUT_FILE_PATH):
 			if bad_signe in rec.name:
 				rec.name = rec.name.replace(bad_signe, '#')
 
-		rec.id = rec.name
-
-		#remove doublicated annotation
+		#rec.description = '' <- this is the complete information
+		rec.id = rec.description
 		rec.description = ''
-		rec.name = ''
-
-			# if bad_signe in rec.id:
-			# 	rec.id = rec.id.replace(bad_signe, '#')
-
-	# print records
-	# exit()
 
 	if '-' in all_records or '.' in all_records: 
 		return('alignment', records)
