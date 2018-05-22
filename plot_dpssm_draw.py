@@ -52,6 +52,7 @@ def convert_choice2list(args, unqiue_string):
 @Gooey(tabbed_groups=True) #show_sidebar=True)
 def main():
 
+	#default args come form the previous window and and biopython (matrices) 
 	default_args = load_default_args()
 
 	parser = GooeyParser(
@@ -307,7 +308,7 @@ for all possibilites''',
 
 	args = parser.parse_args()
 
-	print(args)
+	#print(args)
 
 	args.ali = default_args['alignment']
 	args.csv = default_args['csv']

@@ -1,1 +1,1 @@
-{"alignment": "/home/paul/GitRepos/pssm_minimal/test_data/test_input.fasta", "classes": ["mm", "mom", "mal", "ema"], "class": "Class", "csv": "/home/paul/GitRepos/pssm_minimal/test_data/class_labels.csv"}
+{"alignment": "/home/paul/GitRepos/pssm_minimal/test_data/test_input.fasta", "class": "Class", "csv": "/home/paul/GitRepos/pssm_minimal/test_data/class_labels.csv", "classes": ["mom", "mm", "mal", "ema"]}
