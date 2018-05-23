@@ -1,6 +1,7 @@
 import datetime
 from matplotlib.backends.backend_pdf import PdfPages
-from .lib.mpl_strong_colors import cnames
+#from .lib.mpl_strong_colors import cnames
+from .lib.mpl_strong_colors import get_color_cycle
 
 from scipy import stats
 import math
@@ -117,7 +118,7 @@ def chunck_df_col(df, chunksize = 200):
 
 def export2jalview(df, annot = '', path = None):
 
-	colors = itertools.cycle(iter(list(cnames.items()))) #automatic colors
+	colors = get_color_cycle()
 
 	init_text = 'JALVIEW_ANNOTATION \n'
 
@@ -130,7 +131,7 @@ def export2jalview(df, annot = '', path = None):
 
 		jal_line = 'BAR_GRAPH\t{0}\tSSP {1} \t{2}\n'.format(label_from_ind_plot(ind), annot,matrix_text)
 		init_text += jal_line
-		jal_line2 = 'COLOUR\t{0}\t{1}\n'.format(label_from_ind_plot(ind), colors.next()[1])
+		jal_line2 = 'COLOUR\t{0}\t{1}\n'.format(label_from_ind_plot(ind), next(colors))
 		init_text += jal_line2
 
 	with open(path, 'w') as jal_file:
@@ -199,6 +200,7 @@ def conservation_scores(df1, df2, sub_matrix = None, cons_type = 'entropy'):
 		print('Sub matrix must be a Dataframe !')
 		exit()
 
+	#print(sub_matrix)
 	# print(df1.loc[2].to_dict())
 	# exit()
 
@@ -221,7 +223,7 @@ def conservation_scores(df1, df2, sub_matrix = None, cons_type = 'entropy'):
 	# implement entropy !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	########################
 
-	cons1 = np.max(df1, axis = 1)
+	#cons1 = np.max(df1, axis = 1)
 	# print(cons1)
 
 	if cons_type == 'entropy':
@@ -259,82 +261,82 @@ def conservation_scores(df1, df2, sub_matrix = None, cons_type = 'entropy'):
 	return(cons_diff_score)
 
 
-def conservation_scores_2(df1, df2, sub_matrix = None):
-	'''
-	Calculates the conservation scores between df1 and df2 
-	(should be two arrays of identical dimensions), 
-	if df = n*m --> sub_matrix should be n*n, 
-	returns a 1d array with the cons scores
-	'''
+# def conservation_scores_2(df1, df2, sub_matrix = None):
+# 	'''
+# 	Calculates the conservation scores between df1 and df2 
+# 	(should be two arrays of identical dimensions), 
+# 	if df = n*m --> sub_matrix should be n*n, 
+# 	returns a 1d array with the cons scores
+# 	'''
 
-	if not isinstance(sub_matrix, pd.DataFrame):
-		print('Sub matrix must be a Dataframe !')
-		exit()
-	# 	#length = len(df1[])
-	# 	print('There is something todo here')
-	# 	exit()
-	# 	sub_matrix = pd.DataFrame(np.identity(length),\
-	# 					index=list(string.ascii_uppercase[:length]), \
-	# 					columns=list(string.ascii_uppercase[:length]))      #identity matrix --> substitutuion m. like Blossom...       
-
-
-	# print(sub_matrix)
-	# exit()
+# 	if not isinstance(sub_matrix, pd.DataFrame):
+# 		print('Sub matrix must be a Dataframe !')
+# 		exit()
+# 	# 	#length = len(df1[])
+# 	# 	print('There is something todo here')
+# 	# 	exit()
+# 	# 	sub_matrix = pd.DataFrame(np.identity(length),\
+# 	# 					index=list(string.ascii_uppercase[:length]), \
+# 	# 					columns=list(string.ascii_uppercase[:length]))      #identity matrix --> substitutuion m. like Blossom...       
 
 
-
-	# print(sub_matrix)
-	# print(df1.reindex_axis(sub_matrix.columns, axis = 1))
-
-
-	df1#.reindex_axis(sub_matrix.columns, axis = 1)
-	df2#.reindex_axis(sub_matrix.columns, axis = 1)
-
-	print(df1)
-	exit()
-	#print()
-
-	#sub_matrix = np.array(sub_matrix)                                         #inverse matrix where 0 = 1, 1 = 0
+# 	# print(sub_matrix)
+# 	# exit()
 
 
 
-	#print(sub_matrix)
-
-	df1 = np.array(df1)                                                         #convert to np array
-	df2 = np.array(df2)
-
-	#########################
-	# conservedness 
-	#########################
-
-	########################
-	# implement entropy !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	########################
-
-	cons1 = np.max(df1, axis = 1)                                               #cons score can be defined as the 
-																				#max of the row in the pssm
-	cons2 = np.max(df2, axis = 1)
-	cons_score = (cons1 + cons2) / 2                                            #both sequences are considered, normalized to 1
+# 	# print(sub_matrix)
+# 	# print(df1.reindex_axis(sub_matrix.columns, axis = 1))
 
 
-	#########################
-	# entropy
-	#########################
+# 	df1#.reindex_axis(sub_matrix.columns, axis = 1)
+# 	df2#.reindex_axis(sub_matrix.columns, axis = 1)
+
+# 	print(df1)
+# 	exit()
+# 	#print()
+
+# 	#sub_matrix = np.array(sub_matrix)                                         #inverse matrix where 0 = 1, 1 = 0
 
 
-	sub_probability = (df1[...,None]*df2[:,None,:])                             #multiply row by row, see https://stackoverflow.com/questions/35162197/numpy-matrix-multiplication-of-2d-matrix-to-give-3d-matrix
-																				#--> substitution probaility matrix
 
-	sub_diff_matrix = sub_probability*sub_matrix                                # only different AS are interesting 
+# 	#print(sub_matrix)
+
+# 	df1 = np.array(df1)                                                         #convert to np array
+# 	df2 = np.array(df2)
+
+# 	#########################
+# 	# conservedness 
+# 	#########################
+
+# 	########################
+# 	# implement entropy !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# 	########################
+
+# 	cons1 = np.max(df1, axis = 1)                                               #cons score can be defined as the 
+# 																				#max of the row in the pssm
+# 	cons2 = np.max(df2, axis = 1)
+# 	cons_score = (cons1 + cons2) / 2                                            #both sequences are considered, normalized to 1
 
 
-	sub_diff_score = np.sum(np.sum(sub_diff_matrix, axis=1), axis=1)            #the actual conservation score of each row
+# 	#########################
+# 	# entropy
+# 	#########################
 
-	cons_diff_score = cons_score * sub_diff_score                               #final score considering cons. in a pssm
-																				#and differences between them 
+
+# 	sub_probability = (df1[...,None]*df2[:,None,:])                             #multiply row by row, see https://stackoverflow.com/questions/35162197/numpy-matrix-multiplication-of-2d-matrix-to-give-3d-matrix
+# 																				#--> substitution probaility matrix
+
+# 	sub_diff_matrix = sub_probability*sub_matrix                                # only different AS are interesting 
 
 
-	return(cons_diff_score)
+# 	sub_diff_score = np.sum(np.sum(sub_diff_matrix, axis=1), axis=1)            #the actual conservation score of each row
+
+# 	cons_diff_score = cons_score * sub_diff_score                               #final score considering cons. in a pssm
+# 																				#and differences between them 
+
+
+# 	return(cons_diff_score)
 
 '''
 automatic creation of test data, for conservation_scores function test
@@ -434,6 +436,16 @@ def all_vs_all_pssm_cons(pssm_dict, sub_matrix = pd.DataFrame()):
 	allows easy use of the df as matrix 
 	'''
 
+	# print(pssm_dict)
+
+	# import pickle
+
+
+	# with open('test_pssm_dict.pickle', 'wb') as handle:
+	# 	pickle.dump(pssm_dict, handle,)# protocol=pickle.HIGHEST_PROTOCOL)
+
+	# exit()
+
 	if sub_matrix.empty:
 		p_letters_gap = IUPACData.extended_protein_letters + '-'
 		sub_matrix = pd.DataFrame(np.identity(len(p_letters_gap)),\
@@ -444,9 +456,26 @@ def all_vs_all_pssm_cons(pssm_dict, sub_matrix = pd.DataFrame()):
 	row = []
 
 	#create all combinations (no doublicates) using itertools
-	discri_keys = list(pssm_dict.keys())
+	discri_keys = sorted(list(pssm_dict.keys()))
+	#print(discri_keys)
+
+	# def randomlist(a):
+	# 	import random
+	# 	b = []
+	# 	for i in range(len(a)):
+	# 		elem = random.choice(a)
+	# 		a.remove(elem)
+	# 		b.append(elem)
+	# 		return(b)
+	# discri_keys = randomlist(discri_keys)
+	# print(discri_keys)
+
+	# discri_keys = ['mal', 'ema', 'mom', 'mm']
+	# discri_keys = ['ema', 'mal', 'mom', 'mm']
+
+	#print(discri_keys)
 	combinations = list(itertools.combinations(discri_keys, 2)) #Example: ('3', '2'), ('3', '5'), ('3', '4')
-	
+	#print(combinations)
 	#create an empty array of the expected result file -> combis * positions
 	#combi times tow -> seems to be easier to create a df with doublicated rows, then double indices 
 	num_combinations = len(combinations)
@@ -471,6 +500,9 @@ def all_vs_all_pssm_cons(pssm_dict, sub_matrix = pd.DataFrame()):
 	df = pd.DataFrame(result_array)
 	df['Class_A'] = c1
 	df['Class_B'] = c2
+
+	#print(df.loc[:,[312,'Class_A','Class_B']])
+	#print(df.loc[:,312]) #<- leads to different data ...check !!
 
 	return(df)
 
@@ -534,6 +566,8 @@ def df2pssm_visual(df = None,
 	del kwargs['df']
 	del kwargs['kwargs']
 
+	#print(df.loc[:,312])
+	# exit()
 
 
 	####################################
@@ -780,7 +814,7 @@ def df2pssm_visual(df = None,
 		# top plot
 		##################
 
-		colors = itertools.cycle(iter(list(cnames.items()))) #automatic colors
+		colors = get_color_cycle() #automatic colors
 
 		# if basic.check_dict_key_true(kwargs, 'plot_all'): #all plot option
 		#print(df_plot.sort_index(axis = 0, level=0))
@@ -788,17 +822,18 @@ def df2pssm_visual(df = None,
 		# exit()
 		# exit()
 		plot_labels = []
-		color = next(colors)[1]
+		color = next(colors)
+
 		for ind in df_plot.index:
 
 			label = label_from_ind_plot(ind)
 
 			if ind[2]:
+				#plot the average lines
 				ax.plot(df_plot.columns, df_plot.loc[ind], '-' ,markersize=8,label = ind, color = color)
 			else:
-				# print(df_plot.columns)
-				# print(df_plot.loc[ind])
-				color = next(colors)[1]
+				#plot the markers
+				color = next(colors)
 
 				#print(ind)
 				if ind[0] == 'all' and ind[1] == 'all':
@@ -808,10 +843,10 @@ def df2pssm_visual(df = None,
 				else:
 					marker = 'o'
 
-
 				ax.plot(df_plot.columns, df_plot.loc[ind],marker,markersize=8,label = ind, color = color)
 
 			plot_labels.append(label)
+			#print(color)
 
 
 		# ax.plot(df_plot.columns, df_plot.loc['Average'], 'o', markersize=8, label = 'Average', color = 'blue')
@@ -892,7 +927,7 @@ def df2pssm_visual(df = None,
 	#kwargs2scip = ['keep_data_folder','no_rule','no_alignment','visual','command_line']
 	kwargs_txt = ''
 	i = 1
-	for key, item in list(kwargs.items()):
+	for key, item in sorted(list(kwargs.items())):
 		#if item and key not in kwargs2scip:
 		kwargs_txt += key + ' : ' + str(item) + '    '
 		if i % 4 == 0:
@@ -1056,31 +1091,37 @@ automatic creation of test data for the all-vs-all pssm conservation_scores func
 # # get test seq and discri dict
 # ###############
 
-# length = 260
+#def debug()
 
-# discri_dict = st.get_random_discri_dict(num_classes = 10, num_seqs = 10, length = length, seed_diff = 0.1, class_diff = 0.2, random_seed = True)
-# #test_seq = st.get_random_seqs(num = 1, length = length, difference = 0.6, initial_seq = None, names = None)
+#length = 260
 
-# # # # # ###############
-# # # # # # compute weigth_matrix
-# # # # # ###############
+#discri_dict = st.get_random_discri_dict(num_classes = 10, num_seqs = 10, length = length, seed_diff = 0.1, class_diff = 0.2, random_seed = True)
+# # #test_seq = st.get_random_seqs(num = 1, length = length, difference = 0.6, initial_seq = None, names = None)
 
-# pssm_dict = st.discri_dict2pssm_dict(discri_dict) 
+# # # # # # ###############
+# # # # # # # compute weigth_matrix
+# # # # # # ###############
 
-# '''
-# ['benner6', 'benner22', 'benner74', 'blosum100',
-# 'blosum30', 'blosum35', 'blosum40', 'blosum45',
-# 'blosum50', 'blosum55', 'blosum60', 'blosum62',
-# 'blosum65', 'blosum70', 'blosum75', 'blosum80',
-# 'blosum85', 'blosum90', 'blosum95', 'feng', 'fitch',
-# 'genetic', 'gonnet', 'grant', 'ident', 'johnson', 'levin',
-# 'mclach', 'miyata', 'nwsgappep', 'pam120', 'pam180', 'pam250',
-# 'pam30', 'pam300', 'pam60', 'pam90', 'rao', 'risler', 'structure']
-# '''
+#pssm_dict = st.discri_dict2pssm_dict(discri_dict) 
 
-# sub_matrix = get_sub_matrix(name = 'basic', gap_importance = 0)
+# # '''
+# # ['benner6', 'benner22', 'benner74', 'blosum100',
+# # 'blosum30', 'blosum35', 'blosum40', 'blosum45',
+# # 'blosum50', 'blosum55', 'blosum60', 'blosum62',
+# # 'blosum65', 'blosum70', 'blosum75', 'blosum80',
+# # 'blosum85', 'blosum90', 'blosum95', 'feng', 'fitch',
+# # 'genetic', 'gonnet', 'grant', 'ident', 'johnson', 'levin',
+# # 'mclach', 'miyata', 'nwsgappep', 'pam120', 'pam180', 'pam250',
+# # 'pam30', 'pam300', 'pam60', 'pam90', 'rao', 'risler', 'structure']
+# # '''
+
+#sub_matrix = get_sub_matrix(name = 'basic', gap_importance = 0)
 
 # df = all_vs_all_pssm_cons(pssm_dict, sub_matrix= sub_matrix)                        #get the cons_scores for all pssms
+
+# print(df)
+# exit()
+
 # #df = all_vs_all_pssm_cons(pssm_dict,)# sub_matrix= sub_matrix)                        #get the cons_scores for all pssms
 # df = add_all_vs_all(df) #compute the average for a nicer plot
 # #print(df)

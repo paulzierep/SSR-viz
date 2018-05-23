@@ -247,7 +247,9 @@ for all possibilites''',
 
 	plot_opts_all = parser.add_argument_group('One-vs-One Plot')
 
-	for clas in default_args['classes']:
+	classes = sorted(default_args['classes'])
+
+	for clas in classes:
 		plot_opts_all.add_argument(
 			'-pl_ovo_{0}'.format(clas),
 			metavar = clas,
@@ -256,7 +258,7 @@ for all possibilites''',
 
 	plot_opts_ova = parser.add_argument_group('One-vs-All Plot')
 
-	for clas in default_args['classes']:
+	for clas in classes:
 		plot_opts_ova.add_argument(
 			'-pl_ova_{0}'.format(clas),
 			metavar = clas,
@@ -286,7 +288,7 @@ for all possibilites''',
 
 	heatmap_opts_all = parser.add_argument_group('One-vs-One Heatmap')
 
-	for clas in default_args['classes']:
+	for clas in classes:
 		heatmap_opts_all.add_argument(
 			'-hm_ovo_{0}'.format(clas),
 			metavar = clas,
@@ -295,7 +297,7 @@ for all possibilites''',
 
 	heatmap_opts_ova = parser.add_argument_group('One-vs-All Heatmap')
 
-	for clas in default_args['classes']:
+	for clas in classes:
 		heatmap_opts_ova.add_argument(
 			'-hm_ova_{0}'.format(clas),
 			metavar = clas,
@@ -362,7 +364,9 @@ for all possibilites''',
 		'''.format(args.plot, args.output)
 		)
 
-	# print(figsize)
+	# print('########################')
+	# print(args.matrix)
+
 	# exit()
 
 	pr.update_prediction_rule('pssm_new', 
@@ -408,7 +412,7 @@ for all possibilites''',
 
 # if __name__ == "__main__":
 # 	main()
-main()
+#main()
 
 #########################
 # Examples
@@ -416,3 +420,69 @@ main()
 
 #./plot_dpssm.py -i ./PKS_AT_specificity_tests/NRPS_discri.csv -a ./PKS_AT_specificity_tests/NRPS_alignment.fasta -cl 'Class (more then 10)' -d -b 10 -p NRPS_gi_0_5_basic_DE -b 10 -w 10 -hm_all D E -pl_all D E -gi 0.5 -ma basic
 #./plot_dpssm.py -i ./PKS_AT_specificity_tests/class_labels.csv -a ./PKS_AT_specificity_tests/temp_alignment.fasta -d -b 10 -p PKS_ver_02 -b 10 -w 10 -hm_ova -pl_ova -gi 0
+
+#########################
+#debug
+#########################
+
+main()
+
+# import pickle
+
+# with open('test_pssm_dict.pickle', 'rb') as handle:
+# 	pssm_dict = pickle.load(handle)
+
+# # # from prediction_rules.pssm_func import get_sub_matrix
+# # # sub_matrix = get_sub_matrix(name = 'benner6', gap_importance = 0)
+
+# # # df1 = all_vs_all_pssm_cons(pssm_dict, sub_matrix= sub_matrix)
+
+# from prediction_rules.pssm_func import get_sub_matrix
+# from prediction_rules.pssm_func import all_vs_all_pssm_cons
+
+# # for k in range(10):
+# #from prediction_rules.pssm_func import get_sub_matrix
+# sub_matrix = get_sub_matrix(name = 'benner6', gap_importance = 1)
+# #from prediction_rules.pssm_func import all_vs_all_pssm_cons
+# df1 = all_vs_all_pssm_cons(pssm_dict, sub_matrix= sub_matrix)
+# print(df1.loc[:,310])
+
+# with open('test_pssm_dict.pickle', 'rb') as handle:
+# 	pssm_dict = pickle.load(handle)
+
+# # # from prediction_rules.pssm_func import get_sub_matrix
+# # # sub_matrix = get_sub_matrix(name = 'benner6', gap_importance = 0)
+
+# # # df1 = all_vs_all_pssm_cons(pssm_dict, sub_matrix= sub_matrix)
+
+# from prediction_rules.pssm_func import get_sub_matrix
+# from prediction_rules.pssm_func import all_vs_all_pssm_cons
+
+# # for k in range(10):
+# #from prediction_rules.pssm_func import get_sub_matrix
+# sub_matrix = get_sub_matrix(name = 'benner6', gap_importance = 1)
+# #from prediction_rules.pssm_func import all_vs_all_pssm_cons
+# df1 = all_vs_all_pssm_cons(pssm_dict, sub_matrix= sub_matrix)
+# print(df1.loc[:,310])
+
+
+#  
+
+
+
+# print(df1)
+# print(df2)
+# print(df1.loc[:,310])
+# print(df2.loc[:,310])
+
+# print(df1 == df2)
+
+# from prediction_rules.pssm_func import get_sub_matrix
+
+
+# #print(sub_matrix)
+
+# sub_matrix2 = get_sub_matrix(name = 'benner6', gap_importance = 0)
+# #print(sub_matrix)
+
+# print(sub_matrix == sub_matrix2)
