@@ -2,6 +2,7 @@ import datetime
 from matplotlib.backends.backend_pdf import PdfPages
 #from .lib.mpl_strong_colors import cnames
 from .lib.mpl_strong_colors import get_color_cycle
+from .lib.property_AS_matrix import sub_matrix_p
 
 from scipy import stats
 import math
@@ -143,10 +144,14 @@ def export2jalview(df, annot = '', path = None):
 #######################################
 
 
-def get_sub_matrix(name = 'blosum100', gap_importance = 1):
+def get_sub_matrix(name = 'basic', gap_importance = 1):
 
 	#get an alphabet
 	p_letters_gap = IUPACData.extended_protein_letters + '-'
+
+	inverse_identity = 1 - pd.DataFrame(np.identity(len(p_letters_gap)),\
+					index=list(p_letters_gap), \
+					columns=list(p_letters_gap))
 
 	if name == 'basic':
 		#create basic matrix
@@ -157,22 +162,44 @@ def get_sub_matrix(name = 'blosum100', gap_importance = 1):
 	else:
 		#get an matrix
 		p_letters_gap = IUPACData.extended_protein_letters + '-'
-		sub_matrix = pd.DataFrame(np.zeros((len(p_letters_gap),len(p_letters_gap))),
+		empty_array = np.empty((len(p_letters_gap),len(p_letters_gap)))
+		empty_array[:] = np.nan
+		sub_matrix = pd.DataFrame(empty_array, \
 						index=list(p_letters_gap), \
 						columns=list(p_letters_gap))
 
 		if name in MI.available_matrices:
 			matrix = getattr(MI,name)
+
+		elif name == 'phys-chem':
+			matrix = sub_matrix_p
+
 		else:
-			print(('Matrix {0} does not exsist, chosse one of those {1}'.format(name, MI.available_matrices)))
+			print(('Matrix {0} does not exsist, chose one of those {1}'.format(name, MI.available_matrices)))
 
 		for AS, score in list(matrix.items()):
+
+			if not pd.isnull(sub_matrix.loc[AS[0],AS[1]]) or not \
+				pd.isnull(sub_matrix.loc[AS[1],AS[0]]): #simple check if matrix is not symetric
+				print('Unsymmetric matrices are not supported at the moment')
+				exit()
+
+			if AS[0] == AS[1]:
+				score = 0
+				#print(AS[0])
+
 			sub_matrix.loc[AS[0],AS[1]] = score
 			sub_matrix.loc[AS[1],AS[0]] = score
 
-	#normalize the matrix, sot that it works with the algorithm
-	sub_matrix = sub_matrix.apply(lambda row: row + -min(row), axis = 0)
-	sub_matrix = sub_matrix.apply(lambda row: 1 - (row / max(row)), axis = 0)
+	#normalization of entire dataframe
+	sub_matrix = sub_matrix - sub_matrix.min().min()
+	sub_matrix = sub_matrix / sub_matrix.max().max()
+
+	#inverse dataframe
+	sub_matrix = 1 - sub_matrix
+
+	#remove the identity  A == A is useless
+	sub_matrix = sub_matrix * inverse_identity
 
 	#special ASs are not used at the moment
 	sub_matrix.loc[['U','O','J'],:] = 0
@@ -204,9 +231,13 @@ def conservation_scores(df1, df2, sub_matrix = None, cons_type = 'entropy'):
 	# print(df1.loc[2].to_dict())
 	# exit()
 
+
 	df1 = df1.reindex(sub_matrix.columns, axis = 1)
 	df2 = df2.reindex(sub_matrix.columns, axis = 1)
 
+	# print(df1.loc[310,:])#.loc[310,:])
+	# print(df2.loc[310,:])#.loc[310,:])
+	#print(sub_matrix)
 	#the calculation of the croneberg product only works with numpy so far for me
 	#but the indices must correspond to the correct column
 
@@ -214,6 +245,9 @@ def conservation_scores(df1, df2, sub_matrix = None, cons_type = 'entropy'):
 
 	df1 = np.array(df1)                                                         #convert to np array
 	df2 = np.array(df2)
+
+	# print(df1[310])
+	# print(df2[310])
 
 	#########################
 	# conservedness 
@@ -238,8 +272,12 @@ def conservation_scores(df1, df2, sub_matrix = None, cons_type = 'entropy'):
 		cons1 = np.max(df1, axis = 1)                                               #cons score can be defined as the
 		cons2 = np.max(df2, axis = 1)
 
+	# print(cons1[310])
+	# print(cons2[310])
+
 	cons_score = (cons1 + cons2) / 2                                            #both sequences are considered, normalized to 1
 
+	#print(cons_score[310])
 
 	#########################
 	# entropy
@@ -249,10 +287,19 @@ def conservation_scores(df1, df2, sub_matrix = None, cons_type = 'entropy'):
 	sub_probability = (df1[...,None]*df2[:,None,:])                             #multiply row by row, see https://stackoverflow.com/questions/35162197/numpy-matrix-multiplication-of-2d-matrix-to-give-3d-matrix
 																				#--> substitution probaility matrix
 
+	#print(sub_probability[310])
+
 	sub_diff_matrix = sub_probability*sub_matrix                                # only different AS are interesting 
 
+	#print(sub_diff_matrix[310])
 
 	sub_diff_score = np.sum(np.sum(sub_diff_matrix, axis=1), axis=1)            #the actual differnet score of each row
+
+	#print(sub_diff_score[310])
+
+	# print(cons_score[310])
+	# print(sub_diff_score[310])
+
 
 	cons_diff_score = cons_score * sub_diff_score                               #final score considering cons. in a pssm
 																				#and differences between them 
@@ -428,7 +475,7 @@ automatic creation of test data, for conservation_scores function test
 #   df = pd.DataFrame(result_array, index = row)
 #   return(df)
 
-def all_vs_all_pssm_cons(pssm_dict, sub_matrix = pd.DataFrame()):
+def all_vs_all_pssm_cons(pssm_dict, sub_matrix = pd.DataFrame(), discri_keys = None):
 	'''
 	calls the conservation_scores function on all 
 	class combinations, retuns a pandas df, with all the results, 
@@ -456,26 +503,12 @@ def all_vs_all_pssm_cons(pssm_dict, sub_matrix = pd.DataFrame()):
 	row = []
 
 	#create all combinations (no doublicates) using itertools
-	discri_keys = sorted(list(pssm_dict.keys()))
-	#print(discri_keys)
+	if not discri_keys:
+		discri_keys = sorted(list(pssm_dict.keys()))
+		print(discri_keys)
 
-	# def randomlist(a):
-	# 	import random
-	# 	b = []
-	# 	for i in range(len(a)):
-	# 		elem = random.choice(a)
-	# 		a.remove(elem)
-	# 		b.append(elem)
-	# 		return(b)
-	# discri_keys = randomlist(discri_keys)
-	# print(discri_keys)
 
-	# discri_keys = ['mal', 'ema', 'mom', 'mm']
-	# discri_keys = ['ema', 'mal', 'mom', 'mm']
-
-	#print(discri_keys)
 	combinations = list(itertools.combinations(discri_keys, 2)) #Example: ('3', '2'), ('3', '5'), ('3', '4')
-	#print(combinations)
 	#create an empty array of the expected result file -> combis * positions
 	#combi times tow -> seems to be easier to create a df with doublicated rows, then double indices 
 	num_combinations = len(combinations)
@@ -488,10 +521,12 @@ def all_vs_all_pssm_cons(pssm_dict, sub_matrix = pd.DataFrame()):
 	c1 = []
 	c2 = []
 	for combi in combinations:
+		#print(combi)
 		c1.append(combi[0])
 		c2.append(combi[1])
 		#row.append(combi[1])
 		single_cons_score = conservation_scores(pssm_dict[combi[0]], pssm_dict[combi[1]], sub_matrix)
+		#print(single_cons_score[310])
 		result_array[index] = single_cons_score
 		#result_array[index + 1] = single_cons_score
 		#index += 2

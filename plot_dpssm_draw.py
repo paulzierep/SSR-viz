@@ -33,7 +33,7 @@ def load_default_args():
 	with open(TEMP_PATH, 'r') as fp:
 		data = json.load(fp) #load default args from json file
 
-		data['matrix'] = MI.available_matrices + ['basic'] #add matrices as default arguments
+		data['matrix'] = MI.available_matrices + ['basic','phys-chem'] #add matrices as default arguments
 		return(data)
 
 def convert_choice2list(args, unqiue_string):
@@ -432,13 +432,22 @@ main()
 # with open('test_pssm_dict.pickle', 'rb') as handle:
 # 	pssm_dict = pickle.load(handle)
 
-# # # from prediction_rules.pssm_func import get_sub_matrix
-# # # sub_matrix = get_sub_matrix(name = 'benner6', gap_importance = 0)
-
-# # # df1 = all_vs_all_pssm_cons(pssm_dict, sub_matrix= sub_matrix)
-
 # from prediction_rules.pssm_func import get_sub_matrix
-# from prediction_rules.pssm_func import all_vs_all_pssm_cons
+# # from prediction_rules.pssm_func import all_vs_all_pssm_cons
+
+# sub_matrix = get_sub_matrix(name = 'phys-chem', gap_importance = 0)
+# print(sub_matrix)
+
+# #sub_matrix = get_sub_matrix(name = 'blosum30', gap_importance = 0)
+
+# #print(sub_matrix)
+# exit()
+
+# df1 = all_vs_all_pssm_cons(pssm_dict, sub_matrix= sub_matrix, discri_keys = ['ema', 'mal'])#, 'mm', 'mom'])
+# print(df1.loc[:,[310,'Class_A','Class_B']])
+#print(df1.loc[:,[310,'Class_A','Class_B']])
+# df1 = all_vs_all_pssm_cons(pssm_dict, sub_matrix= sub_matrix, discri_keys = ['mal', 'ema'])#, 'mm', 'mom'])
+# print(df1.loc[:,[310,'Class_A','Class_B']])
 
 # # for k in range(10):
 # #from prediction_rules.pssm_func import get_sub_matrix
