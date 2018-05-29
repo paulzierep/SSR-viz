@@ -1,0 +1,1 @@
+{"alignment": "/home/paul/GitRepos/SSP-viz/test_data/test_input.fasta", "class": "Class", "csv": "/home/paul/GitRepos/SSP-viz/test_data/class_labels.csv", "classes": ["mom", "mm", "ema", "mal"]}

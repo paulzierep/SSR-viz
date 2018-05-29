@@ -1,6 +1,8 @@
 import datetime
 from matplotlib.backends.backend_pdf import PdfPages
-from .lib.mpl_strong_colors import cnames
+#from .lib.mpl_strong_colors import cnames
+from .lib.mpl_strong_colors import get_color_cycle
+from .lib.property_AS_matrix import sub_matrix_p
 
 from scipy import stats
 import math
@@ -25,6 +27,89 @@ import os
 ################################
 # basic functions for the plots
 ################################
+
+def pssm_row2cons(class_name, pssm, indices, cons_percentage):
+
+	cons_df = pd.DataFrame(index = pssm.index, columns = ['{0} C'.format(class_name), '{0} AR'.format(class_name)])
+	def cons_row(row):
+		best_idx = row.argmax()
+		return(best_idx)
+
+	def cons_row_all(row):
+		row = row[(row > cons_percentage)]
+		return(''.join(row.index))
+
+	cons_df['{0} C'.format(class_name)] = pssm.apply(cons_row, axis=1)
+	cons_df['{0} AR'.format(class_name)] = pssm.apply(cons_row_all, axis=1)
+	# cond_df['cons_score'] = 
+
+	cons_df.index = indices
+
+	# print(cons_df)
+	# exit()
+
+	return(cons_df)
+
+def pssm_cons_t(pssm_dict, indices, cons_percentage):
+
+	pssm_cons_dict = {}
+	for class_name, pssm in pssm_dict.items():
+		row_cons =  pssm_row2cons(class_name, pssm, indices, cons_percentage)
+		pssm_cons_dict[class_name] = row_cons
+	
+	return(pssm_cons_dict)
+
+
+def get_stats(df, pssm_dict, path, cons_percentage = 0.05):
+
+	pssm_cons_table = pssm_cons_t(pssm_dict, df.columns, cons_percentage)
+
+	file_text = ''
+	for indices, row in df.iterrows():
+		if indices[2] != 'Window':
+
+			#get the important positions
+			new_row = row[(row > 0)]
+			new_row = new_row.sort_values(ascending = False)
+			new_row.name = 'Score'
+			# print(new_row)
+			# exit()
+
+			# exctract the conserved scores for these positions
+			classes = []
+			if indices[0] == 'all' and indices[1] == 'all' : #all vs all condition
+				for key, cons_table in pssm_cons_table.items():
+					cons_class = cons_table.loc[new_row.index]
+					classes.append(cons_class)
+
+			if indices[0] != 'all' and indices[1] == 'all' : #one vs all condition
+
+				cons_class_A = pssm_cons_table[indices[0]].loc[new_row.index]
+				for key, cons_table in pssm_cons_table.items():
+					if key == indices[0]:
+						pass
+					else:
+						cons_class = cons_table.loc[new_row.index]
+						classes.append(cons_class)
+				classes = [cons_class_A] + classes
+
+			if indices[0] != 'all' and indices[1] != 'all' : #one vs one condition
+				cons_class_A = pssm_cons_table[indices[0]].loc[new_row.index]
+				cons_class_B = pssm_cons_table[indices[1]].loc[new_row.index]
+				classes = [cons_class_A, cons_class_B]
+
+			result_table = pd.concat([new_row] + classes , axis = 1)
+
+			header_line = indices[0] + ' vs ' + indices[1] + '\n'
+			table = result_table.to_csv(index_label = 'Position')
+
+		file_text += header_line
+		file_text += table
+
+	with open(path, 'w') as file:
+		file.write(file_text)
+
+
 
 def label_from_ind_plot(ind):
 	label = ' vs '.join([ind[0], ind[1]])
@@ -117,7 +202,7 @@ def chunck_df_col(df, chunksize = 200):
 
 def export2jalview(df, annot = '', path = None):
 
-	colors = itertools.cycle(iter(list(cnames.items()))) #automatic colors
+	colors = get_color_cycle()
 
 	init_text = 'JALVIEW_ANNOTATION \n'
 
@@ -130,11 +215,32 @@ def export2jalview(df, annot = '', path = None):
 
 		jal_line = 'BAR_GRAPH\t{0}\tSSP {1} \t{2}\n'.format(label_from_ind_plot(ind), annot,matrix_text)
 		init_text += jal_line
-		jal_line2 = 'COLOUR\t{0}\t{1}\n'.format(label_from_ind_plot(ind), colors.next()[1])
+		jal_line2 = 'COLOUR\t{0}\t{1}\n'.format(label_from_ind_plot(ind), next(colors))
 		init_text += jal_line2
 
 	with open(path, 'w') as jal_file:
 		jal_file.write(init_text)
+
+def slice_function(name, class_name):
+	'''
+	Return True if the class_name is part of the name based on the pattern (bla vs blu)
+	'''
+	name = name.split('vs')
+	name = [item.strip(' ') for item in name]
+
+	if class_name in name:
+		return(True)
+	else:
+		return(False)
+
+
+def slice_class_of_df(df, class_name):
+	'''
+	Slices only one class from the df
+	'''
+	inds = [ind for ind in df.index if slice_function(ind, class_name)]
+	df = df.loc[inds]
+	return(df)
 
 
 #######################################
@@ -142,10 +248,14 @@ def export2jalview(df, annot = '', path = None):
 #######################################
 
 
-def get_sub_matrix(name = 'blosum100', gap_importance = 1):
+def get_sub_matrix(name = 'basic', gap_importance = 1):
 
 	#get an alphabet
 	p_letters_gap = IUPACData.extended_protein_letters + '-'
+
+	inverse_identity = 1 - pd.DataFrame(np.identity(len(p_letters_gap)),\
+					index=list(p_letters_gap), \
+					columns=list(p_letters_gap))
 
 	if name == 'basic':
 		#create basic matrix
@@ -156,22 +266,44 @@ def get_sub_matrix(name = 'blosum100', gap_importance = 1):
 	else:
 		#get an matrix
 		p_letters_gap = IUPACData.extended_protein_letters + '-'
-		sub_matrix = pd.DataFrame(np.zeros((len(p_letters_gap),len(p_letters_gap))),
+		empty_array = np.empty((len(p_letters_gap),len(p_letters_gap)))
+		empty_array[:] = np.nan
+		sub_matrix = pd.DataFrame(empty_array, \
 						index=list(p_letters_gap), \
 						columns=list(p_letters_gap))
 
 		if name in MI.available_matrices:
 			matrix = getattr(MI,name)
+
+		elif name == 'phys-chem':
+			matrix = sub_matrix_p
+
 		else:
-			print(('Matrix {0} does not exsist, chosse one of those {1}'.format(name, MI.available_matrices)))
+			print(('Matrix {0} does not exsist, chose one of those {1}'.format(name, MI.available_matrices)))
 
 		for AS, score in list(matrix.items()):
+
+			if not pd.isnull(sub_matrix.loc[AS[0],AS[1]]) or not \
+				pd.isnull(sub_matrix.loc[AS[1],AS[0]]): #simple check if matrix is not symetric
+				print('Unsymmetric matrices are not supported at the moment')
+				exit()
+
+			if AS[0] == AS[1]:
+				score = 0
+				#print(AS[0])
+
 			sub_matrix.loc[AS[0],AS[1]] = score
 			sub_matrix.loc[AS[1],AS[0]] = score
 
-	#normalize the matrix, sot that it works with the algorithm
-	sub_matrix = sub_matrix.apply(lambda row: row + -min(row), axis = 0)
-	sub_matrix = sub_matrix.apply(lambda row: 1 - (row / max(row)), axis = 0)
+	#normalization of entire dataframe
+	sub_matrix = sub_matrix - sub_matrix.min().min()
+	sub_matrix = sub_matrix / sub_matrix.max().max()
+
+	#inverse dataframe
+	sub_matrix = 1 - sub_matrix
+
+	#remove the identity  A == A is useless
+	sub_matrix = sub_matrix * inverse_identity
 
 	#special ASs are not used at the moment
 	sub_matrix.loc[['U','O','J'],:] = 0
@@ -199,12 +331,17 @@ def conservation_scores(df1, df2, sub_matrix = None, cons_type = 'entropy'):
 		print('Sub matrix must be a Dataframe !')
 		exit()
 
+	#print(sub_matrix)
 	# print(df1.loc[2].to_dict())
 	# exit()
+
 
 	df1 = df1.reindex(sub_matrix.columns, axis = 1)
 	df2 = df2.reindex(sub_matrix.columns, axis = 1)
 
+	# print(df1.loc[310,:])#.loc[310,:])
+	# print(df2.loc[310,:])#.loc[310,:])
+	#print(sub_matrix)
 	#the calculation of the croneberg product only works with numpy so far for me
 	#but the indices must correspond to the correct column
 
@@ -212,6 +349,9 @@ def conservation_scores(df1, df2, sub_matrix = None, cons_type = 'entropy'):
 
 	df1 = np.array(df1)                                                         #convert to np array
 	df2 = np.array(df2)
+
+	# print(df1[310])
+	# print(df2[310])
 
 	#########################
 	# conservedness 
@@ -221,7 +361,7 @@ def conservation_scores(df1, df2, sub_matrix = None, cons_type = 'entropy'):
 	# implement entropy !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	########################
 
-	cons1 = np.max(df1, axis = 1)
+	#cons1 = np.max(df1, axis = 1)
 	# print(cons1)
 
 	if cons_type == 'entropy':
@@ -236,10 +376,12 @@ def conservation_scores(df1, df2, sub_matrix = None, cons_type = 'entropy'):
 		cons1 = np.max(df1, axis = 1)                                               #cons score can be defined as the
 		cons2 = np.max(df2, axis = 1)
 
+	# print(cons1[310])
+	# print(cons2[310])
+
 	cons_score = (cons1 + cons2) / 2                                            #both sequences are considered, normalized to 1
 
-
-
+	#print(cons_score[310])
 
 	#########################
 	# entropy
@@ -249,88 +391,19 @@ def conservation_scores(df1, df2, sub_matrix = None, cons_type = 'entropy'):
 	sub_probability = (df1[...,None]*df2[:,None,:])                             #multiply row by row, see https://stackoverflow.com/questions/35162197/numpy-matrix-multiplication-of-2d-matrix-to-give-3d-matrix
 																				#--> substitution probaility matrix
 
+	#print(sub_probability[310])
+
 	sub_diff_matrix = sub_probability*sub_matrix                                # only different AS are interesting 
 
+	#print(sub_diff_matrix[310])
 
 	sub_diff_score = np.sum(np.sum(sub_diff_matrix, axis=1), axis=1)            #the actual differnet score of each row
 
-	cons_diff_score = cons_score * sub_diff_score                               #final score considering cons. in a pssm
-																				#and differences between them 
+	#print(sub_diff_score[310])
 
+	# print(cons_score[310])
+	# print(sub_diff_score[310])
 
-	return(cons_diff_score)
-
-
-def conservation_scores_2(df1, df2, sub_matrix = None):
-	'''
-	Calculates the conservation scores between df1 and df2 
-	(should be two arrays of identical dimensions), 
-	if df = n*m --> sub_matrix should be n*n, 
-	returns a 1d array with the cons scores
-	'''
-
-	if not isinstance(sub_matrix, pd.DataFrame):
-		print('Sub matrix must be a Dataframe !')
-		exit()
-	# 	#length = len(df1[])
-	# 	print('There is something todo here')
-	# 	exit()
-	# 	sub_matrix = pd.DataFrame(np.identity(length),\
-	# 					index=list(string.ascii_uppercase[:length]), \
-	# 					columns=list(string.ascii_uppercase[:length]))      #identity matrix --> substitutuion m. like Blossom...       
-
-
-	# print(sub_matrix)
-	# exit()
-
-
-
-	# print(sub_matrix)
-	# print(df1.reindex_axis(sub_matrix.columns, axis = 1))
-
-
-	df1#.reindex_axis(sub_matrix.columns, axis = 1)
-	df2#.reindex_axis(sub_matrix.columns, axis = 1)
-
-	print(df1)
-	exit()
-	#print()
-
-	#sub_matrix = np.array(sub_matrix)                                         #inverse matrix where 0 = 1, 1 = 0
-
-
-
-	#print(sub_matrix)
-
-	df1 = np.array(df1)                                                         #convert to np array
-	df2 = np.array(df2)
-
-	#########################
-	# conservedness 
-	#########################
-
-	########################
-	# implement entropy !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	########################
-
-	cons1 = np.max(df1, axis = 1)                                               #cons score can be defined as the 
-																				#max of the row in the pssm
-	cons2 = np.max(df2, axis = 1)
-	cons_score = (cons1 + cons2) / 2                                            #both sequences are considered, normalized to 1
-
-
-	#########################
-	# entropy
-	#########################
-
-
-	sub_probability = (df1[...,None]*df2[:,None,:])                             #multiply row by row, see https://stackoverflow.com/questions/35162197/numpy-matrix-multiplication-of-2d-matrix-to-give-3d-matrix
-																				#--> substitution probaility matrix
-
-	sub_diff_matrix = sub_probability*sub_matrix                                # only different AS are interesting 
-
-
-	sub_diff_score = np.sum(np.sum(sub_diff_matrix, axis=1), axis=1)            #the actual conservation score of each row
 
 	cons_diff_score = cons_score * sub_diff_score                               #final score considering cons. in a pssm
 																				#and differences between them 
@@ -338,103 +411,23 @@ def conservation_scores_2(df1, df2, sub_matrix = None):
 
 	return(cons_diff_score)
 
-'''
-automatic creation of test data, for conservation_scores function test
-'''
-
-# size = 100                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-# length = 26 #max 26
-
-# sub_matrix = pd.DataFrame(np.identity(length),\
-#                       index=list(string.ascii_uppercase[:length]), \
-#                       columns=list(string.ascii_uppercase[:length]))      #identity matrix --> substitutuion m. like Blossom...       
-
-# df1 = pd.DataFrame(np.random.dirichlet(np.ones(length),size=size),\
-#                       columns=list(string.ascii_uppercase[:length]))      #random df representing a pssm 
-#                                                                           # dirichlet(np.ones(26) -> (random numbers that sum up to 1
-#                                                                           # string.ascii_uppercase -> all letters in alphabet (ascii)
-# df2 = pd.DataFrame(np.random.dirichlet(np.ones(length),size=size), \
-#                       columns=list(string.ascii_uppercase[:length]))      #random df representing another pssm
-
-# #examples
-
-###super diff
-# df1.loc[0] = 0    #set all to 0
-# df1['A'][0] = 1   #set one to 1
-
-# df2.loc[0] = 0    #set all to 0
-# df2['B'][0] = 1   #set one to 1
-
-##super diff distributed
-# df1.loc[0] = 0        #set all to 0
-# df1['A'][0] = 0.5     #set one to 1
-# df1['B'][0] = 0.5     #set one to 1
-
-# df2.loc[0] = 0        #set all to 0
-# df2['C'][0] = 0.5     #set one to 1
-# df2['D'][0] = 0.5     #set one to 1
-
-##super diff distributed
-# df1.loc[0] = 0            #set all to 0
-# df1['A'][0] = 0.3         #set one to 1
-# df1['B'][0] = 0.3         #set one to 1
-
-# df2.loc[0] = 0            #set all to 0
-# df2['C'][0] = 0.3         #set one to 1
-# df2['D'][0] = 0.3         #set one to 1
-
-
-# print(df1)
-# print(df2)
-# print(conservation_scores(df1, df2, sub_matrix))
-
-# exit()
-
-###########################
-# old version
-###########################
-
-# def all_vs_all_pssm_cons(pssm_dict, sub_matrix = pd.DataFrame()):
-#   '''
-#   calls the conservation_scores function on all 
-#   class combinations, retuns a pandas df, with all the results, 
-#   positions as columns, class as rows (doublicated) -> 
-#   allows easy use of the df as matrix 
-#   '''
-#   row = []
-
-#   #create all combinations (no doublicates) using itertools
-#   discri_keys = pssm_dict.keys()
-#   combinations = list(itertools.combinations(discri_keys, 2)) #Example: ('3', '2'), ('3', '5'), ('3', '4')
-	
-#   #create an empty array of the expected result file -> combis * positions
-#   #combi times tow -> seems to be easier to create a df with doublicated rows, then double indices 
-#   num_combinations = len(combinations)
-#   num_positions = pssm_dict[pssm_dict.keys()[0]].shape[0]
-#   #result_array = np.zeros((num_combinations, num_positions))
-#   result_array = np.zeros((2*num_combinations, num_positions))
-
-#   #call the conservation_scores for each pssm and write into result table
-#   index = 0
-#   for combi in combinations:
-#       row.append(combi[0])
-#       row.append(combi[1])
-#       single_cons_score = conservation_scores(pssm_dict[combi[0]], pssm_dict[combi[1]], sub_matrix)
-#       result_array[index] = single_cons_score
-#       result_array[index + 1] = single_cons_score
-#       index += 2
-#       #index += 1
-
-#   df = pd.DataFrame(result_array, index = row)
-#   return(df)
-
-def all_vs_all_pssm_cons(pssm_dict, sub_matrix = pd.DataFrame()):
+def all_vs_all_pssm_cons(pssm_dict, sub_matrix = pd.DataFrame(), discri_keys = None):
 	'''
 	calls the conservation_scores function on all 
 	class combinations, retuns a pandas df, with all the results, 
 	positions as columns, class as rows (doublicated) -> 
 	allows easy use of the df as matrix 
 	'''
+
+	# print(pssm_dict)
+
+	# import pickle
+
+
+	# with open('test_pssm_dict.pickle', 'wb') as handle:
+	# 	pickle.dump(pssm_dict, handle,)# protocol=pickle.HIGHEST_PROTOCOL)
+
+	# exit()
 
 	if sub_matrix.empty:
 		p_letters_gap = IUPACData.extended_protein_letters + '-'
@@ -446,9 +439,12 @@ def all_vs_all_pssm_cons(pssm_dict, sub_matrix = pd.DataFrame()):
 	row = []
 
 	#create all combinations (no doublicates) using itertools
-	discri_keys = list(pssm_dict.keys())
+	if not discri_keys:
+		discri_keys = sorted(list(pssm_dict.keys()))
+		print(discri_keys)
+
+
 	combinations = list(itertools.combinations(discri_keys, 2)) #Example: ('3', '2'), ('3', '5'), ('3', '4')
-	
 	#create an empty array of the expected result file -> combis * positions
 	#combi times tow -> seems to be easier to create a df with doublicated rows, then double indices 
 	num_combinations = len(combinations)
@@ -461,10 +457,12 @@ def all_vs_all_pssm_cons(pssm_dict, sub_matrix = pd.DataFrame()):
 	c1 = []
 	c2 = []
 	for combi in combinations:
+		#print(combi)
 		c1.append(combi[0])
 		c2.append(combi[1])
 		#row.append(combi[1])
 		single_cons_score = conservation_scores(pssm_dict[combi[0]], pssm_dict[combi[1]], sub_matrix)
+		#print(single_cons_score[310])
 		result_array[index] = single_cons_score
 		#result_array[index + 1] = single_cons_score
 		#index += 2
@@ -473,6 +471,9 @@ def all_vs_all_pssm_cons(pssm_dict, sub_matrix = pd.DataFrame()):
 	df = pd.DataFrame(result_array)
 	df['Class_A'] = c1
 	df['Class_B'] = c2
+
+	#print(df.loc[:,[312,'Class_A','Class_B']])
+	#print(df.loc[:,312]) #<- leads to different data ...check !!
 
 	return(df)
 
@@ -507,9 +508,44 @@ def add_all_vs_all(df):
 	return(final_df)
 
 
-def df2pssm_visual(df, path=None,
-				 **kwargs):
+def df2pssm_visual(df = None, 
+					path=None,
+					pssm_dict= None,
+					hm_ovo = None,
+					hm_ova = None,
+					pl_ovo = None,
+					pl_ova = None,
+					no_hm_ava = False,
+					no_pl_ava = False,
+					window = None,
+					window_type = 'mean',
+					figsize = (29.7, 21.0),
+					chunksize = 100,
+					fontsize = 8,
+					w_ratio = (1, 1),
+					tick_ratio = 5,
+					jv_plot = True,
+					top_label = False,
+					drop_class_label = False,
+					#get_outliers_z = True,
+					**kwargs):
 
+	################
+	#todo doulbe check this set-up !!
+	################
+
+	del locals()['kwargs']
+	kwargs = {**kwargs, **locals()} #kwargs overwriting the default args and merged
+	del kwargs['df']
+	del kwargs['kwargs']
+
+	#print(df.loc[:,312])
+	# exit()
+
+
+	####################################
+	# Handle the kwargs
+	####################################
 
 	#most alignemnt tools start with 1 instead of 0, so this can be changed
 	if 'alignment_index' in kwargs.keys():
@@ -531,15 +567,15 @@ def df2pssm_visual(df, path=None,
 	all_df_list = []
 
 	#get the all vs all dataframes
-	if basic.check_dict_key_not_none(kwargs, 'hm_all'):
+	if kwargs['hm_ovo']:
 
-		if kwargs['hm_all'] == []: #if not specified all are taken
-			kwargs['hm_all'] = optional_classes
+		if kwargs['hm_ovo'] == []: #if not specified all are taken
+			kwargs['hm_ovo'] = optional_classes
 
 		df_na = df[(df.index.get_level_values('Class_A') != 'all')]
 		df_na = df_na[(df_na.index.get_level_values('Class_B') != 'all')]
 
-		class2drop = [x for x in optional_classes if x not in kwargs['hm_all']] #drop all classes, which are not present 
+		class2drop = [x for x in optional_classes if x not in kwargs['hm_ovo']] #drop all classes, which are not present 
 
 		for clas in class2drop:
 			row2drop = df_na.loc[(df_na.index.get_level_values('Class_A') == clas) | (df_na.index.get_level_values('Class_B') == clas)].index
@@ -548,7 +584,7 @@ def df2pssm_visual(df, path=None,
 		all_df_list.append(df_na)
 
 	#get the one vs all dataframes
-	if basic.check_dict_key_not_none(kwargs, 'hm_ova'):
+	if kwargs['hm_ova']:
 		if kwargs['hm_ova'] == []:
 			kwargs['hm_ova'] = optional_classes
 
@@ -584,14 +620,14 @@ def df2pssm_visual(df, path=None,
 	all_df_list = []
 
 	#get the all vs all dataframes
-	if basic.check_dict_key_not_none(kwargs, 'pl_all'):
-		if kwargs['pl_all'] == []: #if not specified all are taken
-			kwargs['pl_all'] = optional_classes
+	if kwargs['pl_ovo']:
+		if kwargs['pl_ovo'] == []: #if not specified all are taken
+			kwargs['pl_ovo'] = optional_classes
 
 		df_na = df[(df.index.get_level_values('Class_A') != 'all')]
 		df_na = df_na[(df_na.index.get_level_values('Class_B') != 'all')]
 
-		class2drop = [x for x in optional_classes if x not in kwargs['pl_all']]
+		class2drop = [x for x in optional_classes if x not in kwargs['pl_ovo']]
 
 		for clas in class2drop:
 			row2drop = df_na.loc[(df_na.index.get_level_values('Class_A') == clas) | (df_na.index.get_level_values('Class_B') == clas)].index
@@ -600,8 +636,7 @@ def df2pssm_visual(df, path=None,
 		all_df_list.append(df_na)
 
 	#get the one vs all dataframes
-
-	if basic.check_dict_key_not_none(kwargs, 'pl_ova'):
+	if kwargs['pl_ova']:
 		if kwargs['pl_ova'] == []:
 			kwargs['pl_ova'] = optional_classes
 
@@ -632,13 +667,9 @@ def df2pssm_visual(df, path=None,
 	# Special arguments for the plot
 	###########################
 
-	if basic.check_dict_key_not_none(kwargs, 'window'):
+	if kwargs['window']:
 		window =  int(kwargs['window'])
-
-		if basic.check_dict_key_not_none(kwargs, 'window_type'):
-			window_type =  kwargs['window_type']
-		else:
-			window_type = 'mean'
+		window_type =  kwargs['window_type']
 
 		if window_type == 'mean':
 
@@ -670,78 +701,81 @@ def df2pssm_visual(df, path=None,
 		df_plot.set_index('Window', append=True, inplace=True)
 
 
+	##########################################
+	# Best or lowest positions handling
+	##########################################
+
+	def outliers_z_score(row, threshold):
+		#computes z_score per row for each row, outlier detection
+		#print(threshold)
+		if row.name[2]: #if this is a window frame just don't apply the funtion
+			return(row)
+
+		mean_y = np.mean(row)
+		stdev_y = np.std(row)
+		z_scores = [(y - mean_y) / stdev_y for y in row]
+		non_outliers = np.where(np.abs(z_scores) < threshold)
+		row.iloc[non_outliers] = -1
+		# print(non_outliers)
+		# exit()
+		# row[non_outliers] = -1
+		return(row)
+
 	def drop_lowest(row, num):
 		if row.name[2]:
 			return(row)
 		
 		drop_panalty = min(row.nlargest(num)) #get a panaly which allows to drop the n below that panelty
 		columns_to_drop = row < drop_panalty  #get df where condition applies
+		# print(columns_to_drop)
+		# exit()
 		row[columns_to_drop] = -1         #set to nan
 		return(row)
 
-	def drop_by_panalty(row, panalty):
-		if not row.name[2]:
-			return(row)
+	# def drop_by_panalty(row, panalty):
+	# 	if not row.name[2]:
+	# 		return(row)
 
-		columns_to_drop = row < panalty  #get df where condition applies
-		row[columns_to_drop] = -1         #set to nan
-		return(row)
+	# 	columns_to_drop = row < panalty  #get df where condition applies
+	# 	row[columns_to_drop] = -1         #set to nan
+	# 	return(row)
+
+	if 'get_outliers_z' in kwargs:
+		df_plot = df_plot.apply(lambda row: outliers_z_score(row, kwargs['get_outliers_z']), axis =1)
 
 	if 'get_best' in kwargs:
 		df_plot = df_plot.apply(lambda row: drop_lowest(row, kwargs['get_best']), axis =1)
-		#df_plot.apply(lambda row: drop_lowest(row, kwargs['get_best']), axis =1)
-		# print(df_plot)
 
-	if 'drop_panalty' in kwargs:
-		df_plot = df_plot.apply(lambda row: drop_by_panalty(row, kwargs['drop_panalty']), axis =1)
+	# if 'drop_panalty' in kwargs:
+	# 	df_plot = df_plot.apply(lambda row: drop_by_panalty(row, kwargs['drop_panalty']), axis =1)
 
 	###########################
 	# Plot options
 	###########################
 
-	if basic.check_dict_key_not_none(kwargs, 'figsize'):
-		figsize = (float(kwargs['figsize'][0]), float(kwargs['figsize'][1]))
-	else:
-		figsize = (29.7, 21.0)
+	figsize = (float(kwargs['figsize'][0]), float(kwargs['figsize'][1]))
 
-	#print(figsize)
-	# print(kwargs['chunksize'])
-
-	if  basic.check_dict_key_not_none(kwargs, 'chunksize'):
-		
-		if kwargs['chunksize'] == 'total':
-			chunksize = len(df.columns)
-		else:
-			chunksize = int(kwargs['chunksize'])
+	if kwargs['chunksize'] == 'total':
+		chunksize = len(df.columns)
 	else:
-		chunksize = 100
+		chunksize = int(kwargs['chunksize'])
 
-	if basic.check_dict_key_not_none(kwargs, 'fontsize'):
-		fontsize = kwargs['fontsize']
-	else:
-		fontsize = 8
+	fontsize = kwargs['fontsize']
+	w_ratio = (float(kwargs['w_ratio'][0]), float(kwargs['w_ratio'][1]))
+	tick_ratio = int(kwargs['tick_ratio'])
 
-	if basic.check_dict_key_not_none(kwargs, 'w_ratio'):
-		w_ratio = (float(kwargs['w_ratio'][0]), float(kwargs['w_ratio'][1]))
-	else:
-		w_ratio = (1, 3)
-
-	if basic.check_dict_key_not_none(kwargs, 'tick_ratio'):
-		tick_ratio = int(kwargs['tick_ratio'])
-	else:
-		tick_ratio = 5
 
 	######################
-	# Create plots for Jalview
+	# Create plots for Jalview and stats
 	######################
 
-	if basic.check_dict_key_true(kwargs, 'jv_plot'):
+	if kwargs['jv_plot']:
 		jv_path = path + '_jv_plot.txt'
 		export2jalview(df_plot, annot = 'plot', path = jv_path)
 
-	# if basic.check_dict_key_true(kwargs, 'jv_heatmap'):
-	# 	jv_path = path + '_jv_heatmap.txt'
-	# 	export2jalview(df_heatmap, annot = 'heatmap', path = jv_path)
+	if kwargs['stats']:
+		stats_path = path + '_stats.csv'
+		get_stats(df_plot, pssm_dict, stats_path, cons_percentage = kwargs['stats_p'])
 
 	#################################
 	# Plotting
@@ -762,7 +796,7 @@ def df2pssm_visual(df, path=None,
 		#print(df_heatmap)
 
 		#get a fig object, an ax for the plot, another for the heatmap
-		if basic.check_dict_key_true(kwargs, 'top_label'):
+		if kwargs['top_label']:
 			fig, (ax_label, ax, ax2) = plt.subplots(3,1, gridspec_kw = {'height_ratios':[0.25,w_ratio[0],w_ratio[1]]}, figsize=(cm2inch(figsize[0]), cm2inch(figsize[1])))
 		else:
 			fig, (ax, ax2) = plt.subplots(2,1, gridspec_kw = {'height_ratios':[w_ratio[0],w_ratio[1]]}, figsize=(cm2inch(figsize[0]), cm2inch(figsize[1])))
@@ -771,7 +805,7 @@ def df2pssm_visual(df, path=None,
 		# top plot
 		##################
 
-		colors = itertools.cycle(iter(list(cnames.items()))) #automatic colors
+		colors = get_color_cycle() #automatic colors
 
 		# if basic.check_dict_key_true(kwargs, 'plot_all'): #all plot option
 		#print(df_plot.sort_index(axis = 0, level=0))
@@ -779,17 +813,18 @@ def df2pssm_visual(df, path=None,
 		# exit()
 		# exit()
 		plot_labels = []
-		color = next(colors)[1]
+		color = next(colors)
+
 		for ind in df_plot.index:
 
 			label = label_from_ind_plot(ind)
 
 			if ind[2]:
+				#plot the average lines
 				ax.plot(df_plot.columns, df_plot.loc[ind], '-' ,markersize=8,label = ind, color = color)
 			else:
-				# print(df_plot.columns)
-				# print(df_plot.loc[ind])
-				color = next(colors)[1]
+				#plot the markers
+				color = next(colors)
 
 				#print(ind)
 				if ind[0] == 'all' and ind[1] == 'all':
@@ -799,17 +834,17 @@ def df2pssm_visual(df, path=None,
 				else:
 					marker = 'o'
 
-
 				ax.plot(df_plot.columns, df_plot.loc[ind],marker,markersize=8,label = ind, color = color)
 
 			plot_labels.append(label)
+			#print(color)
 
 
 		# ax.plot(df_plot.columns, df_plot.loc['Average'], 'o', markersize=8, label = 'Average', color = 'blue')
 
 		handles, labels = ax.get_legend_handles_labels()
 
-		if basic.check_dict_key_true(kwargs, 'top_label'):
+		if kwargs['top_label']:
 			ax_label.legend(handles, plot_labels, loc='upper center', ncol = 7, fontsize = fontsize)
 			ax_label.axis('off')
 
@@ -820,7 +855,7 @@ def df2pssm_visual(df, path=None,
 		ax.set_xticks(x_ticks_major)
 		ax.set_xticks(x_ticks_minor, minor=True)
 		ax.set_xticklabels(x_ticks_major, fontsize = fontsize)
-		ax.set_ylim(0 , 1)
+		ax.set_ylim(0 , 1.1)
 		ax.set_yticklabels([0,0.2,0.4,0.6,0.8,1], fontsize = fontsize)
 
 		min_x = min(df_plot.columns) - 1
@@ -840,7 +875,7 @@ def df2pssm_visual(df, path=None,
 
 		ticks_range = np.arange(0.5, len(df_heatmap.index), 1)
 
-		if basic.check_dict_key_true(kwargs, 'drop_class_label'):
+		if kwargs['drop_class_label']:
 			ax2.set_yticks([np.mean(ticks_range)])
 			ax2.set_yticklabels(['-'], fontsize = fontsize)
 
@@ -880,10 +915,10 @@ def df2pssm_visual(df, path=None,
 	ax2.axis('off')
 
 	#create a options text for the top plot
-	kwargs2scip = ['keep_data_folder','no_rule','no_alignment','visual','command_line']
+	kwargs2scip = ['keep_data_folder','no_rule','no_alignment','visual','command_line', 'pssm_dict']
 	kwargs_txt = ''
 	i = 1
-	for key, item in list(kwargs.items()):
+	for key, item in sorted(list(kwargs.items())):
 		if item and key not in kwargs2scip:
 			kwargs_txt += key + ' : ' + str(item) + '    '
 			if i % 4 == 0:
@@ -906,31 +941,6 @@ def df2pssm_visual(df, path=None,
 	figure_list = [fig] + figure_list
 
 	multi_pdf(figure_list, path = path)
-
-
-
-def slice_function(name, class_name):
-	'''
-	Return True if the class_name is part of the name based on the pattern (bla vs blu)
-	'''
-	name = name.split('vs')
-	name = [item.strip(' ') for item in name]
-
-	if class_name in name:
-		return(True)
-	else:
-		return(False)
-
-
-def slice_class_of_df(df, class_name):
-	'''
-	Slices only one class from the df
-	'''
-	inds = [ind for ind in df.index if slice_function(ind, class_name)]
-	df = df.loc[inds]
-	return(df)
-	
-
 
 
 #####################################
@@ -1047,31 +1057,37 @@ automatic creation of test data for the all-vs-all pssm conservation_scores func
 # # get test seq and discri dict
 # ###############
 
-# length = 260
+#def debug()
 
-# discri_dict = st.get_random_discri_dict(num_classes = 10, num_seqs = 10, length = length, seed_diff = 0.1, class_diff = 0.2, random_seed = True)
-# #test_seq = st.get_random_seqs(num = 1, length = length, difference = 0.6, initial_seq = None, names = None)
+#length = 260
 
-# # # # # ###############
-# # # # # # compute weigth_matrix
-# # # # # ###############
+#discri_dict = st.get_random_discri_dict(num_classes = 10, num_seqs = 10, length = length, seed_diff = 0.1, class_diff = 0.2, random_seed = True)
+# # #test_seq = st.get_random_seqs(num = 1, length = length, difference = 0.6, initial_seq = None, names = None)
 
-# pssm_dict = st.discri_dict2pssm_dict(discri_dict) 
+# # # # # # ###############
+# # # # # # # compute weigth_matrix
+# # # # # # ###############
 
-# '''
-# ['benner6', 'benner22', 'benner74', 'blosum100',
-# 'blosum30', 'blosum35', 'blosum40', 'blosum45',
-# 'blosum50', 'blosum55', 'blosum60', 'blosum62',
-# 'blosum65', 'blosum70', 'blosum75', 'blosum80',
-# 'blosum85', 'blosum90', 'blosum95', 'feng', 'fitch',
-# 'genetic', 'gonnet', 'grant', 'ident', 'johnson', 'levin',
-# 'mclach', 'miyata', 'nwsgappep', 'pam120', 'pam180', 'pam250',
-# 'pam30', 'pam300', 'pam60', 'pam90', 'rao', 'risler', 'structure']
-# '''
+#pssm_dict = st.discri_dict2pssm_dict(discri_dict) 
 
-# sub_matrix = get_sub_matrix(name = 'basic', gap_importance = 0)
+# # '''
+# # ['benner6', 'benner22', 'benner74', 'blosum100',
+# # 'blosum30', 'blosum35', 'blosum40', 'blosum45',
+# # 'blosum50', 'blosum55', 'blosum60', 'blosum62',
+# # 'blosum65', 'blosum70', 'blosum75', 'blosum80',
+# # 'blosum85', 'blosum90', 'blosum95', 'feng', 'fitch',
+# # 'genetic', 'gonnet', 'grant', 'ident', 'johnson', 'levin',
+# # 'mclach', 'miyata', 'nwsgappep', 'pam120', 'pam180', 'pam250',
+# # 'pam30', 'pam300', 'pam60', 'pam90', 'rao', 'risler', 'structure']
+# # '''
+
+#sub_matrix = get_sub_matrix(name = 'basic', gap_importance = 0)
 
 # df = all_vs_all_pssm_cons(pssm_dict, sub_matrix= sub_matrix)                        #get the cons_scores for all pssms
+
+# print(df)
+# exit()
+
 # #df = all_vs_all_pssm_cons(pssm_dict,)# sub_matrix= sub_matrix)                        #get the cons_scores for all pssms
 # df = add_all_vs_all(df) #compute the average for a nicer plot
 # #print(df)

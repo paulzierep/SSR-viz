@@ -231,7 +231,8 @@ def align2discri_dict(INPUT_FASTA_ALIGNED_PATH, regex_str = '_([0-9]+)$', exclud
 
 	for entry in align:
 
-		regex_search = re.search(regex_str, entry.name)
+		#descrption is best to use, as this is the entire header in a fasta file.
+		regex_search = re.search(regex_str, entry.description)
 		#print regex_search.group(1)
 		if regex_search == None:
 			print((entry.name + ' - discriminator could not be detected via regex'))
@@ -290,47 +291,47 @@ def align2csv(INPUT_FASTA_PATH, DISCRI_CSV_PATH):
 			# exit()
 			writer.writerow({'Name': sequence.description, 'Class': ''})
 
-def align2discri_dict_update(INPUT_FASTA_PATH, discri_dict, regex_str = None):
-	'''updates the discri dict with new sequences from the alignment'''
+# def align2discri_dict_update(INPUT_FASTA_PATH, discri_dict, regex_str = None):
+# 	'''updates the discri dict with new sequences from the alignment'''
 
-	records = list(SeqIO.parse(INPUT_FASTA_PATH, "fasta"))
+# 	records = list(SeqIO.parse(INPUT_FASTA_PATH, "fasta"))
 
-	all_records = list(itertools.chain.from_iterable(list(discri_dict.values()))) #get all seqs in the discri dict
-	all_names = [seq.name for seq in all_records] #get all the names in the discri dict
+# 	all_records = list(itertools.chain.from_iterable(list(discri_dict.values()))) #get all seqs in the discri dict
+# 	all_names = [seq.name for seq in all_records] #get all the names in the discri dict
 
-	for sequence in records:
-		if sequence.name not in all_names:
+# 	for sequence in records:
+# 		if sequence.name not in all_names:
 
-			if regex_str == None:
+# 			if regex_str == None:
 
-				if 'unknown' not in list(discri_dict.keys()): #create new dict entry if needed, fill list with sequences.
-					discri_dict['unknown'] = []
+# 				if 'unknown' not in list(discri_dict.keys()): #create new dict entry if needed, fill list with sequences.
+# 					discri_dict['unknown'] = []
 
-				discri_dict['unknown'].append(sequence)
+# 				discri_dict['unknown'].append(sequence)
 
-			else:
+# 			else:
 
-				regex_search = re.search(regex_str, sequence.name)
-				#print regex_search.group(1)
-				if regex_search == None:
-					print((sequence.name + ' - discriminator could not be detected via regex'))
-					if 'unknown' not in list(discri_dict.keys()): #create new dict entry if needed, fill list with sequences.
-						discri_dict['unknown'] = []
+# 				regex_search = re.search(regex_str, sequence.name)
+# 				#print regex_search.group(1)
+# 				if regex_search == None:
+# 					print((sequence.name + ' - discriminator could not be detected via regex'))
+# 					if 'unknown' not in list(discri_dict.keys()): #create new dict entry if needed, fill list with sequences.
+# 						discri_dict['unknown'] = []
 
-					discri_dict['unknown'].append(sequence)
+# 					discri_dict['unknown'].append(sequence)
 
-				else:
-					#print regex_search.group(0)
-					found = regex_search.group(1)
+# 				else:
+# 					#print regex_search.group(0)
+# 					found = regex_search.group(1)
 
-					if found not in list(discri_dict.keys()): #create new dict entry if needed, fill list with sequences.
-						discri_dict[found] = []
+# 					if found not in list(discri_dict.keys()): #create new dict entry if needed, fill list with sequences.
+# 						discri_dict[found] = []
 
-					discri_dict[found].append(sequence)				
+# 					discri_dict[found].append(sequence)				
 
 
 
-	return(discri_dict)
+# 	return(discri_dict)
 
 def csv2discri_dict(DISCRI_CSV_PATH, INPUT_FASTA_ALIGNED_PATH, \
 					delimiter = ',', name_field = 'Name', \
@@ -392,12 +393,12 @@ def csv2discri_dict(DISCRI_CSV_PATH, INPUT_FASTA_ALIGNED_PATH, \
 
 				entry_matches = False 									#so far this entry did not match the alignment
 				for entry in align:										#compare the name to the alignment
-					if entry.name == row[name_field] and entry_matches == False:
+					if entry.description == row[name_field] and entry_matches == False:
 						discri_dict[row[class_field]].append(entry)			#add Biopython obj if it is found in the csv
 						entry_matches = True							#only one Biopython obj can be assigned to the csv entry
 
-					elif entry.name == row[name_field] and entry_matches == True:
-						print(('Multiple matches between csv file and alignment' + entry.name + 'discarded'))
+					elif entry.description == row[name_field] and entry_matches == True:
+						print(('Multiple matches between csv file and alignment' + entry.description + 'discarded'))
 
 				if entry_matches == False:
 					print(('No aligned sequence found for ' + row[name_field]))

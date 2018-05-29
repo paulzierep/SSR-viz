@@ -34,7 +34,7 @@ class pred_rule():
 	'''class wich stores the file and file_paths of the main files needed 
 	for creation of prediction rules'''
 
-	def __init__(self, file_path_dict, init_file, remove_output=False):
+	def __init__(self, file_path_dict, init_file, remove_output=False, replace_ali = False):
 
 		self.allowed_paths = ['multi_fasta',
 							  'alignment',
@@ -118,14 +118,23 @@ class pred_rule():
 			fasta_type, records = file_conversion.fasta_check(
 			self.init_file_path)  # checks if raw or alignment
 
-			if fasta_type != 'alignment':  # input is alignment
+			if fasta_type != 'alignment':  # input is not  alignment
 				print('If multi fasta is not defined input file must be alignment')
 			else:
-				if basic.create_file(self.alignment, remove=remove_output):
+
+				if replace_ali:
+					self.alignment = self.init_file_path
 					records = domain_extractor.unique_sequence_list(
 						records)  # check if records are unique in the list
 					# creates the alignment file
 					SeqIO.write(records, self.alignment, 'fasta')
+
+				else:
+					if basic.create_file(self.alignment, remove=remove_output):
+						records = domain_extractor.unique_sequence_list(
+							records)  # check if records are unique in the list
+						# creates the alignment file
+						SeqIO.write(records, self.alignment, 'fasta')
 
 		#############################
 		# initiate hmmer profile
@@ -171,12 +180,13 @@ class pred_rule():
 		self.descri_regex = descri_regex
 
 		bad_signes = ['\|', '\/', '\(', '\)'] 
+		bad_signes = []
 
 		#some signes are not good input, so they are raplaced.
 		#based on the bad_signes in the file conversion
 		# '(', ')' due to mafft handling
 
-		if self.descri_regex != None:
+		if self.descri_regex:
 			for bad_signe in bad_signes:
 				self.descri_regex = self.descri_regex.replace(bad_signe, '\#')
 
