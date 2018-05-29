@@ -34,10 +34,10 @@ from . import sequence_translations
 from .basic import basic
 
 #for the tree class
-from sklearn import tree
-from sklearn.ensemble import RandomForestClassifier
+# from sklearn import tree
+# from sklearn.ensemble import RandomForestClassifier
 
-import pydotplus 
+#import pydotplus 
 
 #for the pssm class
 #import pssm_functions

@@ -24,7 +24,7 @@ from gooey import GooeyParser
 
 from subprocess import Popen, PIPE
 
-import tempfile
+#import tempfile
 import json
 
 @Gooey(program_name='SSP-viz')
