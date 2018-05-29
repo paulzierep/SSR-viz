@@ -315,13 +315,17 @@ class pssm_rule_new(rule_object):
 
 			# optional plot name for pssm rule
 			if 'plot_name' in kwargs:
-				if not '.pdf' in kwargs['plot_name']: #add .pdf if not specified
-					kwargs['plot_name'] += '.pdf'
+				# if not '.pdf' in kwargs['plot_name']: #add .pdf if not specified
+				# 	kwargs['plot_name'] += '.pdf'
 				visual_path = os.path.join(self.rule_data_storage, kwargs['plot_name'])
 			else:
 				visual_path = os.path.join(self.rule_data_storage, 'temp_visual.pdf')
 
 			df = pssm_func.add_all_vs_all(df) 										#compute the average for a nicer plot
+
+			#Create plot stats
+			# if basic.check_dict_key_true(kwargs, 'stats'):
+			# 	pssm_func.get_stats(df = df, pssm_dict = pssm_dict, path = visual_path, **kwargs)
 
 			# do not remove old plot by default
 			#print(kwargs['delete_plot'])
@@ -329,12 +333,12 @@ class pssm_rule_new(rule_object):
 			#tested
 			if basic.check_dict_key_true(kwargs, 'delete_plot'):
 				if basic.create_file(visual_path, remove = True):
-					pssm_func.df2pssm_visual(df = df, path = visual_path, **kwargs)
+					pssm_func.df2pssm_visual(df = df, path = visual_path, pssm_dict = pssm_dict, **kwargs)
 			else:
 				if not basic.create_file(visual_path, remove = False):
 					print('Plot not created, chose different plot name, please !')
 				else:
-					pssm_func.df2pssm_visual(df = df, path = visual_path, **kwargs)
+					pssm_func.df2pssm_visual(df = df, path = visual_path, pssm_dict = pssm_dict, **kwargs)
 					
 			# else:
 			# 	pssm_func.df2pssm_visual(df = df, path = visual_path, **kwargs)

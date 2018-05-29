@@ -28,6 +28,89 @@ import os
 # basic functions for the plots
 ################################
 
+def pssm_row2cons(class_name, pssm, indices, cons_percentage):
+
+	cons_df = pd.DataFrame(index = pssm.index, columns = ['{0} C'.format(class_name), '{0} AR'.format(class_name)])
+	def cons_row(row):
+		best_idx = row.argmax()
+		return(best_idx)
+
+	def cons_row_all(row):
+		row = row[(row > cons_percentage)]
+		return(''.join(row.index))
+
+	cons_df['{0} C'.format(class_name)] = pssm.apply(cons_row, axis=1)
+	cons_df['{0} AR'.format(class_name)] = pssm.apply(cons_row_all, axis=1)
+	# cond_df['cons_score'] = 
+
+	cons_df.index = indices
+
+	# print(cons_df)
+	# exit()
+
+	return(cons_df)
+
+def pssm_cons_t(pssm_dict, indices, cons_percentage):
+
+	pssm_cons_dict = {}
+	for class_name, pssm in pssm_dict.items():
+		row_cons =  pssm_row2cons(class_name, pssm, indices, cons_percentage)
+		pssm_cons_dict[class_name] = row_cons
+	
+	return(pssm_cons_dict)
+
+
+def get_stats(df, pssm_dict, path, cons_percentage = 0.05):
+
+	pssm_cons_table = pssm_cons_t(pssm_dict, df.columns, cons_percentage)
+
+	file_text = ''
+	for indices, row in df.iterrows():
+		if indices[2] != 'Window':
+
+			#get the important positions
+			new_row = row[(row > 0)]
+			new_row = new_row.sort_values(ascending = False)
+			new_row.name = 'Score'
+			# print(new_row)
+			# exit()
+
+			# exctract the conserved scores for these positions
+			classes = []
+			if indices[0] == 'all' and indices[1] == 'all' : #all vs all condition
+				for key, cons_table in pssm_cons_table.items():
+					cons_class = cons_table.loc[new_row.index]
+					classes.append(cons_class)
+
+			if indices[0] != 'all' and indices[1] == 'all' : #one vs all condition
+
+				cons_class_A = pssm_cons_table[indices[0]].loc[new_row.index]
+				for key, cons_table in pssm_cons_table.items():
+					if key == indices[0]:
+						pass
+					else:
+						cons_class = cons_table.loc[new_row.index]
+						classes.append(cons_class)
+				classes = [cons_class_A] + classes
+
+			if indices[0] != 'all' and indices[1] != 'all' : #one vs one condition
+				cons_class_A = pssm_cons_table[indices[0]].loc[new_row.index]
+				cons_class_B = pssm_cons_table[indices[1]].loc[new_row.index]
+				classes = [cons_class_A, cons_class_B]
+
+			result_table = pd.concat([new_row] + classes , axis = 1)
+
+			header_line = indices[0] + ' vs ' + indices[1] + '\n'
+			table = result_table.to_csv(index_label = 'Position')
+
+		file_text += header_line
+		file_text += table
+
+	with open(path, 'w') as file:
+		file.write(file_text)
+
+
+
 def label_from_ind_plot(ind):
 	label = ' vs '.join([ind[0], ind[1]])
 	if ind[2]:
@@ -137,6 +220,27 @@ def export2jalview(df, annot = '', path = None):
 
 	with open(path, 'w') as jal_file:
 		jal_file.write(init_text)
+
+def slice_function(name, class_name):
+	'''
+	Return True if the class_name is part of the name based on the pattern (bla vs blu)
+	'''
+	name = name.split('vs')
+	name = [item.strip(' ') for item in name]
+
+	if class_name in name:
+		return(True)
+	else:
+		return(False)
+
+
+def slice_class_of_df(df, class_name):
+	'''
+	Slices only one class from the df
+	'''
+	inds = [ind for ind in df.index if slice_function(ind, class_name)]
+	df = df.loc[inds]
+	return(df)
 
 
 #######################################
@@ -307,174 +411,6 @@ def conservation_scores(df1, df2, sub_matrix = None, cons_type = 'entropy'):
 
 	return(cons_diff_score)
 
-
-# def conservation_scores_2(df1, df2, sub_matrix = None):
-# 	'''
-# 	Calculates the conservation scores between df1 and df2 
-# 	(should be two arrays of identical dimensions), 
-# 	if df = n*m --> sub_matrix should be n*n, 
-# 	returns a 1d array with the cons scores
-# 	'''
-
-# 	if not isinstance(sub_matrix, pd.DataFrame):
-# 		print('Sub matrix must be a Dataframe !')
-# 		exit()
-# 	# 	#length = len(df1[])
-# 	# 	print('There is something todo here')
-# 	# 	exit()
-# 	# 	sub_matrix = pd.DataFrame(np.identity(length),\
-# 	# 					index=list(string.ascii_uppercase[:length]), \
-# 	# 					columns=list(string.ascii_uppercase[:length]))      #identity matrix --> substitutuion m. like Blossom...       
-
-
-# 	# print(sub_matrix)
-# 	# exit()
-
-
-
-# 	# print(sub_matrix)
-# 	# print(df1.reindex_axis(sub_matrix.columns, axis = 1))
-
-
-# 	df1#.reindex_axis(sub_matrix.columns, axis = 1)
-# 	df2#.reindex_axis(sub_matrix.columns, axis = 1)
-
-# 	print(df1)
-# 	exit()
-# 	#print()
-
-# 	#sub_matrix = np.array(sub_matrix)                                         #inverse matrix where 0 = 1, 1 = 0
-
-
-
-# 	#print(sub_matrix)
-
-# 	df1 = np.array(df1)                                                         #convert to np array
-# 	df2 = np.array(df2)
-
-# 	#########################
-# 	# conservedness 
-# 	#########################
-
-# 	########################
-# 	# implement entropy !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# 	########################
-
-# 	cons1 = np.max(df1, axis = 1)                                               #cons score can be defined as the 
-# 																				#max of the row in the pssm
-# 	cons2 = np.max(df2, axis = 1)
-# 	cons_score = (cons1 + cons2) / 2                                            #both sequences are considered, normalized to 1
-
-
-# 	#########################
-# 	# entropy
-# 	#########################
-
-
-# 	sub_probability = (df1[...,None]*df2[:,None,:])                             #multiply row by row, see https://stackoverflow.com/questions/35162197/numpy-matrix-multiplication-of-2d-matrix-to-give-3d-matrix
-# 																				#--> substitution probaility matrix
-
-# 	sub_diff_matrix = sub_probability*sub_matrix                                # only different AS are interesting 
-
-
-# 	sub_diff_score = np.sum(np.sum(sub_diff_matrix, axis=1), axis=1)            #the actual conservation score of each row
-
-# 	cons_diff_score = cons_score * sub_diff_score                               #final score considering cons. in a pssm
-# 																				#and differences between them 
-
-
-# 	return(cons_diff_score)
-
-'''
-automatic creation of test data, for conservation_scores function test
-'''
-
-# size = 100                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-# length = 26 #max 26
-
-# sub_matrix = pd.DataFrame(np.identity(length),\
-#                       index=list(string.ascii_uppercase[:length]), \
-#                       columns=list(string.ascii_uppercase[:length]))      #identity matrix --> substitutuion m. like Blossom...       
-
-# df1 = pd.DataFrame(np.random.dirichlet(np.ones(length),size=size),\
-#                       columns=list(string.ascii_uppercase[:length]))      #random df representing a pssm 
-#                                                                           # dirichlet(np.ones(26) -> (random numbers that sum up to 1
-#                                                                           # string.ascii_uppercase -> all letters in alphabet (ascii)
-# df2 = pd.DataFrame(np.random.dirichlet(np.ones(length),size=size), \
-#                       columns=list(string.ascii_uppercase[:length]))      #random df representing another pssm
-
-# #examples
-
-###super diff
-# df1.loc[0] = 0    #set all to 0
-# df1['A'][0] = 1   #set one to 1
-
-# df2.loc[0] = 0    #set all to 0
-# df2['B'][0] = 1   #set one to 1
-
-##super diff distributed
-# df1.loc[0] = 0        #set all to 0
-# df1['A'][0] = 0.5     #set one to 1
-# df1['B'][0] = 0.5     #set one to 1
-
-# df2.loc[0] = 0        #set all to 0
-# df2['C'][0] = 0.5     #set one to 1
-# df2['D'][0] = 0.5     #set one to 1
-
-##super diff distributed
-# df1.loc[0] = 0            #set all to 0
-# df1['A'][0] = 0.3         #set one to 1
-# df1['B'][0] = 0.3         #set one to 1
-
-# df2.loc[0] = 0            #set all to 0
-# df2['C'][0] = 0.3         #set one to 1
-# df2['D'][0] = 0.3         #set one to 1
-
-
-# print(df1)
-# print(df2)
-# print(conservation_scores(df1, df2, sub_matrix))
-
-# exit()
-
-###########################
-# old version
-###########################
-
-# def all_vs_all_pssm_cons(pssm_dict, sub_matrix = pd.DataFrame()):
-#   '''
-#   calls the conservation_scores function on all 
-#   class combinations, retuns a pandas df, with all the results, 
-#   positions as columns, class as rows (doublicated) -> 
-#   allows easy use of the df as matrix 
-#   '''
-#   row = []
-
-#   #create all combinations (no doublicates) using itertools
-#   discri_keys = pssm_dict.keys()
-#   combinations = list(itertools.combinations(discri_keys, 2)) #Example: ('3', '2'), ('3', '5'), ('3', '4')
-	
-#   #create an empty array of the expected result file -> combis * positions
-#   #combi times tow -> seems to be easier to create a df with doublicated rows, then double indices 
-#   num_combinations = len(combinations)
-#   num_positions = pssm_dict[pssm_dict.keys()[0]].shape[0]
-#   #result_array = np.zeros((num_combinations, num_positions))
-#   result_array = np.zeros((2*num_combinations, num_positions))
-
-#   #call the conservation_scores for each pssm and write into result table
-#   index = 0
-#   for combi in combinations:
-#       row.append(combi[0])
-#       row.append(combi[1])
-#       single_cons_score = conservation_scores(pssm_dict[combi[0]], pssm_dict[combi[1]], sub_matrix)
-#       result_array[index] = single_cons_score
-#       result_array[index + 1] = single_cons_score
-#       index += 2
-#       #index += 1
-
-#   df = pd.DataFrame(result_array, index = row)
-#   return(df)
-
 def all_vs_all_pssm_cons(pssm_dict, sub_matrix = pd.DataFrame(), discri_keys = None):
 	'''
 	calls the conservation_scores function on all 
@@ -574,6 +510,7 @@ def add_all_vs_all(df):
 
 def df2pssm_visual(df = None, 
 					path=None,
+					pssm_dict= None,
 					hm_ovo = None,
 					hm_ova = None,
 					pl_ovo = None,
@@ -590,7 +527,8 @@ def df2pssm_visual(df = None,
 					jv_plot = True,
 					top_label = False,
 					drop_class_label = False,
-				 	**kwargs):
+					#get_outliers_z = True,
+					**kwargs):
 
 	################
 	#todo doulbe check this set-up !!
@@ -698,7 +636,6 @@ def df2pssm_visual(df = None,
 		all_df_list.append(df_na)
 
 	#get the one vs all dataframes
-
 	if kwargs['pl_ova']:
 		if kwargs['pl_ova'] == []:
 			kwargs['pl_ova'] = optional_classes
@@ -768,30 +705,49 @@ def df2pssm_visual(df = None,
 	# Best or lowest positions handling
 	##########################################
 
+	def outliers_z_score(row, threshold):
+		#computes z_score per row for each row, outlier detection
+		#print(threshold)
+		if row.name[2]: #if this is a window frame just don't apply the funtion
+			return(row)
+
+		mean_y = np.mean(row)
+		stdev_y = np.std(row)
+		z_scores = [(y - mean_y) / stdev_y for y in row]
+		non_outliers = np.where(np.abs(z_scores) < threshold)
+		row.iloc[non_outliers] = -1
+		# print(non_outliers)
+		# exit()
+		# row[non_outliers] = -1
+		return(row)
+
 	def drop_lowest(row, num):
 		if row.name[2]:
 			return(row)
 		
 		drop_panalty = min(row.nlargest(num)) #get a panaly which allows to drop the n below that panelty
 		columns_to_drop = row < drop_panalty  #get df where condition applies
+		# print(columns_to_drop)
+		# exit()
 		row[columns_to_drop] = -1         #set to nan
 		return(row)
 
-	def drop_by_panalty(row, panalty):
-		if not row.name[2]:
-			return(row)
+	# def drop_by_panalty(row, panalty):
+	# 	if not row.name[2]:
+	# 		return(row)
 
-		columns_to_drop = row < panalty  #get df where condition applies
-		row[columns_to_drop] = -1         #set to nan
-		return(row)
+	# 	columns_to_drop = row < panalty  #get df where condition applies
+	# 	row[columns_to_drop] = -1         #set to nan
+	# 	return(row)
+
+	if 'get_outliers_z' in kwargs:
+		df_plot = df_plot.apply(lambda row: outliers_z_score(row, kwargs['get_outliers_z']), axis =1)
 
 	if 'get_best' in kwargs:
 		df_plot = df_plot.apply(lambda row: drop_lowest(row, kwargs['get_best']), axis =1)
-		#df_plot.apply(lambda row: drop_lowest(row, kwargs['get_best']), axis =1)
-		# print(df_plot)
 
-	if 'drop_panalty' in kwargs:
-		df_plot = df_plot.apply(lambda row: drop_by_panalty(row, kwargs['drop_panalty']), axis =1)
+	# if 'drop_panalty' in kwargs:
+	# 	df_plot = df_plot.apply(lambda row: drop_by_panalty(row, kwargs['drop_panalty']), axis =1)
 
 	###########################
 	# Plot options
@@ -810,16 +766,16 @@ def df2pssm_visual(df = None,
 
 
 	######################
-	# Create plots for Jalview
+	# Create plots for Jalview and stats
 	######################
 
 	if kwargs['jv_plot']:
 		jv_path = path + '_jv_plot.txt'
 		export2jalview(df_plot, annot = 'plot', path = jv_path)
 
-	# if basic.check_dict_key_true(kwargs, 'jv_heatmap'):
-	# 	jv_path = path + '_jv_heatmap.txt'
-	# 	export2jalview(df_heatmap, annot = 'heatmap', path = jv_path)
+	if kwargs['stats']:
+		stats_path = path + '_stats.csv'
+		get_stats(df_plot, pssm_dict, stats_path, cons_percentage = kwargs['stats_p'])
 
 	#################################
 	# Plotting
@@ -899,7 +855,7 @@ def df2pssm_visual(df = None,
 		ax.set_xticks(x_ticks_major)
 		ax.set_xticks(x_ticks_minor, minor=True)
 		ax.set_xticklabels(x_ticks_major, fontsize = fontsize)
-		ax.set_ylim(0 , 1)
+		ax.set_ylim(0 , 1.1)
 		ax.set_yticklabels([0,0.2,0.4,0.6,0.8,1], fontsize = fontsize)
 
 		min_x = min(df_plot.columns) - 1
@@ -959,15 +915,15 @@ def df2pssm_visual(df = None,
 	ax2.axis('off')
 
 	#create a options text for the top plot
-	#kwargs2scip = ['keep_data_folder','no_rule','no_alignment','visual','command_line']
+	kwargs2scip = ['keep_data_folder','no_rule','no_alignment','visual','command_line', 'pssm_dict']
 	kwargs_txt = ''
 	i = 1
 	for key, item in sorted(list(kwargs.items())):
-		#if item and key not in kwargs2scip:
-		kwargs_txt += key + ' : ' + str(item) + '    '
-		if i % 4 == 0:
-			kwargs_txt += '\n'
-		i += 1
+		if item and key not in kwargs2scip:
+			kwargs_txt += key + ' : ' + str(item) + '    '
+			if i % 4 == 0:
+				kwargs_txt += '\n'
+			i += 1
 
 	# if basic.check_dict_key_not_none(kwargs, 'command_line'):
 	# 	command_line = kwargs['command_line']
@@ -985,31 +941,6 @@ def df2pssm_visual(df = None,
 	figure_list = [fig] + figure_list
 
 	multi_pdf(figure_list, path = path)
-
-
-
-def slice_function(name, class_name):
-	'''
-	Return True if the class_name is part of the name based on the pattern (bla vs blu)
-	'''
-	name = name.split('vs')
-	name = [item.strip(' ') for item in name]
-
-	if class_name in name:
-		return(True)
-	else:
-		return(False)
-
-
-def slice_class_of_df(df, class_name):
-	'''
-	Slices only one class from the df
-	'''
-	inds = [ind for ind in df.index if slice_function(ind, class_name)]
-	df = df.loc[inds]
-	return(df)
-	
-
 
 
 #####################################
