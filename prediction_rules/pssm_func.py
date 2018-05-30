@@ -366,6 +366,7 @@ def conservation_scores(df1, df2, sub_matrix = None, cons_type = 'entropy'):
 
 	if cons_type == 'entropy':
 		#normalized inverted shanon entropy
+
 		entro_func = lambda x: 1 - stats.entropy(x, qk = None, base = float(2)) / 4.32
 
 		cons1 = np.apply_along_axis(entro_func, 1, df1)
