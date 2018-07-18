@@ -12,18 +12,28 @@ MAIN_FOLDER = '.'
 INPUT_PDB = '5lcd.pdb'
 #INPUT_PDB = '1b3n.pdb'
 #INPUT_PDB = '4na1.pdb'
+INPUT_PDB = '5maq.pdb'
+INPUT_PDB = '3czp.pdb'
+#INPUT_PDB = '5llb.pdb'
 #INPUT_ALI = 'phosphatases_ali.fasta'
 INPUT_ALI = 'promals3d_alignment_trim_selection.fasta'
 
 chain_id = 'A'
+
+csv_output = '3czp 1 vs 2'
 
 #positions = [650]	
 #positions = [550,587,590,593,617,619,624,650,655,718]
 # positions = [533,596]
 # positions = [533,596] 
 
-positions = [67,73,103,107,134,136,167] #I vs III
-positions = [65,93,107,133,167] #I vs III basic
+#positions = [67,73,103,107,134,136,167] #I vs III
+positions =  [167,104,107,134,136,67,73,86,258,235,138,131,]
+
+
+#positions = [167,104,65,107,93,134,136,103,104,106,67,131,]
+
+#positions = [65,93,107,133,167] #I vs III basic
 #positions = [459,496,533,536,560,563,565,570,596,664] #I vs III
 
 
@@ -98,6 +108,26 @@ print('++++++++++++++++')
 print(positions)
 print('++++++++++++++++')
 
+selection_in_ali = positions
+selection_in_ali = [str(num) for num in selection_in_ali]
+
+# print('++++++++++++++++')
+# print(mapped_alignment)
+# print('++++++++++++++++')
+
+selection = mapped_alignment.loc[(mapped_alignment.new_seq.isin(selection_in_ali))]
+
+print('++++++++++++++++')
+print(selection)
+print(selection.residue_number)
+print('++++++++++++++++')
+
+selection.to_csv(csv_output)
+
+resis = '+'.join(list(selection.residue_number.astype('str')))
+
+exit()
+
 #########################
 # Open with window
 #########################
@@ -123,21 +153,6 @@ cmd.show('cartoon', 'chain {0}'.format(chain_id))
 #resis = '+'.join(list(ali_res.astype('str')))
 
 #resis = str(min(ali_res)) + '-' + str(max(ali_res))
-
-selection_in_ali = positions
-selection_in_ali = [str(num) for num in selection_in_ali]
-
-# print('++++++++++++++++')
-# print(mapped_alignment)
-# print('++++++++++++++++')
-
-selection = mapped_alignment.loc[(mapped_alignment.new_seq.isin(selection_in_ali))]
-
-print('++++++++++++++++')
-print(selection)
-print('++++++++++++++++')
-
-resis = '+'.join(list(selection.residue_number.astype('str')))
 
 # ali_res = mapped_alignment.loc[(mapped_alignment.new_seq != '-')]
 

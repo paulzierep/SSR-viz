@@ -19,21 +19,23 @@ if not sys.warnoptions:
 
 from prediction_rules.main_pred import pred_rule
 
+from add_on import add_pdb2alignment
+
 from gooey import Gooey
 from gooey import GooeyParser
 
 from subprocess import Popen, PIPE
 
-import tempfile
+#import tempfile
 import json
 
-@Gooey(program_name='SSP-viz')
+@Gooey(program_name='SSR-viz')
 def main():
 
 	parser = GooeyParser(
 
 		description='''The CSV_builder protocol can be used to create the 
-csv annotation file, the SSP_plot protocol starts 
+csv annotation file, the SSR_plot protocol starts 
 the plotting window''')
 
 	subs = parser.add_subparsers(help='commands', dest='command')
@@ -101,7 +103,7 @@ such as notepad or sublime or online: https://regex101.com/
 						metavar = 'Output file for the class labels',
 						dest = 'csv',
 						default = 'class_labels.csv',
-						help='The name of the CSV file, this is used for the SSP algorithm.'
+						help='The name of the CSV file, this is used for the SSR algorithm.'
 						)
 
 	csv_parse_o.add_argument(
@@ -114,10 +116,10 @@ such as notepad or sublime or online: https://regex101.com/
 						)
 
 	################################
-	# SSP plot parser
+	# SSR plot parser
 	################################
 
-	ssp_plot_parser = subs.add_parser('SSP_plot', help='Creates the differnce pssm plot, based on the class_label.csv file and the converted alignmet file')
+	ssp_plot_parser = subs.add_parser('SSR_plot', help='Creates the differnce pssm plot, based on the class_label.csv file and the converted alignmet file')
 
 	ssp_plot_parser_r = ssp_plot_parser.add_argument_group('Required arguments')
 
@@ -148,6 +150,78 @@ such as notepad or sublime or online: https://regex101.com/
 						widget='FileChooser'
 						)
 
+
+	################################
+	# SSR add pdb to MSA
+	################################
+
+	add_pdb_parser = subs.add_parser('Add_pdb', help='Add the indices of an pdb file to the created csv files')
+
+	add_pdb_parser_r = add_pdb_parser.add_argument_group('Required arguments')
+
+	add_pdb_parser_r.add_argument(
+						'-a', '--ali',
+						metavar = 'Input sequence alignment file',
+						required=True,
+						dest = 'ali',
+						help='Input file must be a sequence alignment in FASTA format',
+						widget='FileChooser'
+						)
+
+	add_pdb_parser_r.add_argument(
+						'-p', '--pdb',
+						metavar = 'Input pdb file',
+						required=True,
+						dest = 'pdb',
+						help='Input file must be a sequence alignment in FASTA format',
+						widget='FileChooser'
+						)
+
+	add_pdb_parser_r.add_argument(
+						'-c', '--chain',
+						metavar = 'Chain in the pdb file',
+						default = 'A',
+						required=True,
+						dest = 'chain',
+						help='Must exsist in the pdb',
+						)
+
+	add_pdb_parser_r.add_argument(
+						'-t', '--temp',
+						metavar = 'Temporary folder',
+						required=True,
+						# default = 'temp',
+						dest = 'temp',
+						help='Stores added alignment of the pdb and the mafft map file',
+						widget="DirChooser",
+						)
+
+	add_pdb_parser_r.add_argument(
+						'-m', '--mafft',
+						metavar = 'Mafft executable',
+						required=True,
+						dest = 'mafft',
+						default = 'mafft',
+						help='mafft allows to add a sequence to an alignment',
+			
+						)
+
+	add_pdb_parser_r.add_argument(
+					'-i_csv', '--input_csv',
+					metavar = 'Input csv',
+					required=True,
+					dest = 'i_csv',
+					help='mafft allows to add a sequence to an alignment',
+					widget='FileChooser'
+					)
+
+	add_pdb_parser_r.add_argument(
+					'-o_csv', '--output_csv',
+					metavar = 'Output csv',
+					required=True,
+					dest = 'o_csv',
+					help='mafft allows to add a sequence to an alignment',
+					)
 
 	args = parser.parse_args()
 
@@ -183,6 +257,7 @@ such as notepad or sublime or online: https://regex101.com/
 
 
 			pr = pred_rule(file_path_dict, args.input, remove_output = args.delete, replace_ali = True) #init the object
+
 		else:
 			print('''
 			#################################################################
@@ -208,7 +283,7 @@ such as notepad or sublime or online: https://regex101.com/
 	# Call the ssp plot routine
 	##################################
 
-	if args.command == 'SSP_plot':
+	if args.command == 'SSR_plot':
 
 		OUTPUT_PATH = os.path.join(os.path.dirname(args.csv))#, args.pred_rules)
 
@@ -251,7 +326,7 @@ such as notepad or sublime or online: https://regex101.com/
 		default_args['classes'] = list(pr.discri_dict.keys())
 
 
-		#write a temp file with the default args as json
+				#write a temp file with the default args as json
 		CURRENT_PATH = os.path.dirname(sys.argv[0])
 		TEMP_PATH = os.path.join(CURRENT_PATH, 'ssp_viz_temp_params.txt')
 		with open(TEMP_PATH, 'w') as tmp:
@@ -260,15 +335,35 @@ such as notepad or sublime or online: https://regex101.com/
 		#execute the next gooey window in seperate process
 		#if the files are scripts this should be the python script
 		#if executeables this should be the exe !
-		# process_call = os.path.join(CURRENT_PATH, 'SSP-viz-draw')
+		# process_call = os.path.join(CURRENT_PATH, 'SSR-viz-draw')
 		# process = Popen(process_call, stdout=PIPE, stderr=PIPE)
 		PYTHON_PATH = sys.executable
 		# print(PYTHON_PATH)
 		# print('hi')
-		process = Popen([PYTHON_PATH, 'SSP-viz-draw.py'], stdout=PIPE, stderr=PIPE)
+		process = Popen([PYTHON_PATH, 'SSR-viz-draw.py'], stdout=PIPE, stderr=PIPE)
 		output, error = process.communicate()
 		# print(output)
 		# print(error)
+
+	##################################
+	# Call add pdb routine
+	##################################
+
+	if args.command == 'Add_pdb':
+
+		seq = add_pdb2alignment.pdb2seq(args.pdb, args.chain, args.temp)
+		map_file = add_pdb2alignment.mafft_add_seq(args.mafft, args.ali, seq, args.temp)
+		map_df = add_pdb2alignment.map2df(map_file)
+		add_pdb2alignment.add_pos2csv(args.i_csv, args.o_csv, map_df, args.pdb)
+
+		print('''
+		#################################################################
+		New csv file written to:
+		{0}
+		#################################################################
+		'''.format(args.o_csv)
+		)
+
 
 if __name__ == "__main__":
 	main()

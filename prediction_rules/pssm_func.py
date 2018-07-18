@@ -19,8 +19,8 @@ import Bio.SubsMat.MatrixInfo as MI
 
 from . import sequence_translations as st
 #import random  
-#sys.path.append('../')
-from .basic import basic
+# sys.path.append('../')
+# from .basic import basic
 #import basic
 import os
 
@@ -30,7 +30,7 @@ import os
 
 def pssm_row2cons(class_name, pssm, indices, cons_percentage):
 
-	cons_df = pd.DataFrame(index = pssm.index, columns = ['{0} C'.format(class_name), '{0} AR'.format(class_name)])
+	cons_df = pd.DataFrame(index = pssm.index, columns = ['{0} Cons'.format(class_name), '{0} All res.'.format(class_name)])
 	def cons_row(row):
 		best_idx = row.argmax()
 		return(best_idx)
@@ -39,8 +39,8 @@ def pssm_row2cons(class_name, pssm, indices, cons_percentage):
 		row = row[(row > cons_percentage)]
 		return(''.join(row.index))
 
-	cons_df['{0} C'.format(class_name)] = pssm.apply(cons_row, axis=1)
-	cons_df['{0} AR'.format(class_name)] = pssm.apply(cons_row_all, axis=1)
+	cons_df['{0} Cons'.format(class_name)] = pssm.apply(cons_row, axis=1)
+	cons_df['{0} All res.'.format(class_name)] = pssm.apply(cons_row_all, axis=1)
 	# cond_df['cons_score'] = 
 
 	cons_df.index = indices
@@ -66,7 +66,9 @@ def get_stats(df, pssm_dict, path, cons_percentage = 0.05):
 
 	file_text = ''
 	for indices, row in df.iterrows():
-		if indices[2] != 'Window':
+		# print(indices[2])
+		# print(indices)
+		if not indices[2]: #!= 'Window':
 
 			#get the important positions
 			new_row = row[(row > 0)]
@@ -78,12 +80,13 @@ def get_stats(df, pssm_dict, path, cons_percentage = 0.05):
 			# exctract the conserved scores for these positions
 			classes = []
 			if indices[0] == 'all' and indices[1] == 'all' : #all vs all condition
+				#print('aa')
 				for key, cons_table in pssm_cons_table.items():
 					cons_class = cons_table.loc[new_row.index]
 					classes.append(cons_class)
 
 			if indices[0] != 'all' and indices[1] == 'all' : #one vs all condition
-
+				#print('oa')
 				cons_class_A = pssm_cons_table[indices[0]].loc[new_row.index]
 				for key, cons_table in pssm_cons_table.items():
 					if key == indices[0]:
@@ -94,6 +97,7 @@ def get_stats(df, pssm_dict, path, cons_percentage = 0.05):
 				classes = [cons_class_A] + classes
 
 			if indices[0] != 'all' and indices[1] != 'all' : #one vs one condition
+				#print('oo')
 				cons_class_A = pssm_cons_table[indices[0]].loc[new_row.index]
 				cons_class_B = pssm_cons_table[indices[1]].loc[new_row.index]
 				classes = [cons_class_A, cons_class_B]
@@ -103,8 +107,8 @@ def get_stats(df, pssm_dict, path, cons_percentage = 0.05):
 			header_line = indices[0] + ' vs ' + indices[1] + '\n'
 			table = result_table.to_csv(index_label = 'Position')
 
-		file_text += header_line
-		file_text += table
+			file_text += header_line
+			file_text += table
 
 	with open(path, 'w') as file:
 		file.write(file_text)
@@ -319,9 +323,9 @@ def get_sub_matrix(name = 'basic', gap_importance = 1):
 
 	return(sub_matrix)
 
-def conservation_scores(df1, df2, sub_matrix = None, cons_type = 'entropy'):
+def cons_diff_scores(df1, df2, sub_matrix = None, b_sub_matrix = None, matrix_weigth = 0.01, cons_type = 'entropy'):
 	'''
-	Calculates the conservation scores between df1 and df2 
+	Calculates the conserved differences scores between df1 and df2 
 	(should be two arrays of identical dimensions), 
 	if df = n*m --> sub_matrix should be n*n, 
 	returns a 1d array with the cons scores
@@ -346,6 +350,7 @@ def conservation_scores(df1, df2, sub_matrix = None, cons_type = 'entropy'):
 	#but the indices must correspond to the correct column
 
 	sub_matrix = np.array(sub_matrix)
+	b_sub_matrix = np.array(b_sub_matrix)
 
 	df1 = np.array(df1)                                                         #convert to np array
 	df2 = np.array(df2)
@@ -354,15 +359,8 @@ def conservation_scores(df1, df2, sub_matrix = None, cons_type = 'entropy'):
 	# print(df2[310])
 
 	#########################
-	# conservedness 
+	# conservedness based on entropy
 	#########################
-
-	########################
-	# implement entropy !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	########################
-
-	#cons1 = np.max(df1, axis = 1)
-	# print(cons1)
 
 	if cons_type == 'entropy':
 		#normalized inverted shanon entropy
@@ -372,29 +370,25 @@ def conservation_scores(df1, df2, sub_matrix = None, cons_type = 'entropy'):
 		cons1 = np.apply_along_axis(entro_func, 1, df1)
 		cons2 = np.apply_along_axis(entro_func, 1, df2)
 
+	#########################
+	# conservedness based on basic cons (old)
+	#########################
+
 	else:
 
 		cons1 = np.max(df1, axis = 1)                                               #cons score can be defined as the
 		cons2 = np.max(df2, axis = 1)
 
-	# print(cons1[310])
-	# print(cons2[310])
-
 	cons_score = (cons1 + cons2) / 2                                            #both sequences are considered, normalized to 1
-
-	#print(cons_score[310])
-
-	#########################
-	# entropy
-	#########################
 
 
 	sub_probability = (df1[...,None]*df2[:,None,:])                             #multiply row by row, see https://stackoverflow.com/questions/35162197/numpy-matrix-multiplication-of-2d-matrix-to-give-3d-matrix
 																				#--> substitution probaility matrix
 
-	#print(sub_probability[310])
+	# print(b_sub_matrix)
+	# exit()
 
-	sub_diff_matrix = sub_probability*sub_matrix                                # only different AS are interesting 
+	sub_diff_matrix = sub_probability*b_sub_matrix                              # only different AS are interesting 
 
 	#print(sub_diff_matrix[310])
 
@@ -410,11 +404,28 @@ def conservation_scores(df1, df2, sub_matrix = None, cons_type = 'entropy'):
 																				#and differences between them 
 
 
+	matrix_influence = sub_probability * sub_matrix
+	matrix_influence_score = np.sum(np.sum(matrix_influence, axis=1), axis=1) 
+
+	# print(matrix_influence_score)
+	# print(matrix_weigth)
+	# exit()
+
+	w_matrix_influence_score = matrix_weigth*matrix_influence_score
+
+	cons_diff_score = cons_diff_score + w_matrix_influence_score
+
+
+
 	return(cons_diff_score)
 
-def all_vs_all_pssm_cons(pssm_dict, sub_matrix = pd.DataFrame(), discri_keys = None):
+def all_vs_all_pssm_cons(pssm_dict, 
+						sub_matrix = pd.DataFrame(), 
+						b_sub_matrix = pd.DataFrame(), 
+						matrix_weigth = 0.01,
+						discri_keys = None):
 	'''
-	calls the conservation_scores function on all 
+	calls the cons_diff_scores function on all 
 	class combinations, retuns a pandas df, with all the results, 
 	positions as columns, class as rows (doublicated) -> 
 	allows easy use of the df as matrix 
@@ -436,13 +447,18 @@ def all_vs_all_pssm_cons(pssm_dict, sub_matrix = pd.DataFrame(), discri_keys = N
 						index=list(p_letters_gap), \
 						columns=list(p_letters_gap))        #identity matrix --> substitutuion m. like Blossom...       
 
+	if b_sub_matrix.empty:
+		p_letters_gap = IUPACData.extended_protein_letters + '-'
+		b_sub_matrix = pd.DataFrame(np.identity(len(p_letters_gap)),\
+						index=list(p_letters_gap), \
+						columns=list(p_letters_gap))        #identity matrix --> substitutuion m. like Blossom...       
 
 	row = []
 
 	#create all combinations (no doublicates) using itertools
 	if not discri_keys:
 		discri_keys = sorted(list(pssm_dict.keys()))
-		print(discri_keys)
+		#print(discri_keys)
 
 
 	combinations = list(itertools.combinations(discri_keys, 2)) #Example: ('3', '2'), ('3', '5'), ('3', '4')
@@ -453,7 +469,7 @@ def all_vs_all_pssm_cons(pssm_dict, sub_matrix = pd.DataFrame(), discri_keys = N
 	result_array = np.zeros((num_combinations, num_positions))
 	#result_array = np.zeros((2*num_combinations, num_positions))
 
-	#call the conservation_scores for each pssm and write into result table
+	#call the cons_diff_scores for each pssm and write into result table
 	index = 0
 	c1 = []
 	c2 = []
@@ -462,7 +478,7 @@ def all_vs_all_pssm_cons(pssm_dict, sub_matrix = pd.DataFrame(), discri_keys = N
 		c1.append(combi[0])
 		c2.append(combi[1])
 		#row.append(combi[1])
-		single_cons_score = conservation_scores(pssm_dict[combi[0]], pssm_dict[combi[1]], sub_matrix)
+		single_cons_score = cons_diff_scores(pssm_dict[combi[0]], pssm_dict[combi[1]], sub_matrix, b_sub_matrix, matrix_weigth)
 		#print(single_cons_score[310])
 		result_array[index] = single_cons_score
 		#result_array[index + 1] = single_cons_score
@@ -1031,7 +1047,7 @@ def weighed_pssm_scoring(scoring_dict, weigth_matrix, no_weigth_matrix = True, p
 ###################################
 
 '''
-automatic creation of test data for the all-vs-all pssm conservation_scores function
+automatic creation of test data for the all-vs-all pssm cons_diff_scores function
 '''
 
 # import sys
@@ -1082,7 +1098,9 @@ automatic creation of test data for the all-vs-all pssm conservation_scores func
 # # 'pam30', 'pam300', 'pam60', 'pam90', 'rao', 'risler', 'structure']
 # # '''
 
-#sub_matrix = get_sub_matrix(name = 'basic', gap_importance = 0)
+# sub_matrix = get_sub_matrix(name = 'basic', gap_importance = 0)
+# print(sub_matrix)
+# exit()
 
 # df = all_vs_all_pssm_cons(pssm_dict, sub_matrix= sub_matrix)                        #get the cons_scores for all pssms
 
