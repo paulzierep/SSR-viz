@@ -1,1 +1,1 @@
-{"csv": "/home/paul/GitRepos/SSR-viz/test_data/example_data/class_labels.csv", "classes": ["mal", "mom", "mm"], "alignment": "/home/paul/GitRepos/SSR-viz/test_data/example_data/AT_specificity_ali.fasta", "class": "Class"}
+{"csv": "/home/paul/git/SSR-viz/test_data/example_data/class_labels.csv", "classes": ["mal", "mm", "mom"], "class": "Class", "alignment": "/home/paul/git/SSR-viz/test_data/example_data/AT_specificity_ali.fasta"}
