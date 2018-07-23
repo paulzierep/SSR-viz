@@ -24,6 +24,10 @@ alignment of proteins with experimental validated functionality.
 
 \end{abstract}
 
+\pagebreak
+\tableofcontents
+
+
 \section{Install}
 
 \todo{add paths to the install}
@@ -97,7 +101,7 @@ The mapping scheme is shown in Fig.~\todo{fig}.
 
 \subsection{Arguments}
 
-Input sequence alignment file
+\subsubsection{Input sequence alignment file}
 
 The alignment file with the sequences of the family.
 The deisred format is in FASTA fromat (clustalo), see section~\ref{example}
@@ -107,22 +111,37 @@ Inplace FASTA conversion / Temporary alignment file name
 
 The \textbf{CSV\_Builder} routine will remove duplicates from the 
 alignment, as multiple identical sequences will overestimate the importance
-of this subfamily. The alignment can be converted in-place, meaning
+of this subfamily. The alignment can be converted inplace, meaning
 the original alignment is overwritten or a new alignment can be 
 created.
 
 Regex extraction of the class label
 
 The normal \textbf{CSV\_Builder} routine will create a CSV file,
-with an empty column for the class labels.
+with an empty column for the class labels. Which must be manually 
+filled.
 In some cases the class label is part of the sequence names,
 this labels can be extracted using regular expressions (regex) patterns.
 The entire scope of regex is to big for this manual, but the set of
-examples below should help to 
+examples in the appendix~\ref{appendix} should help to get started. There are various 
+tools available which can be used to test regex before usage, most text editors 
+support regex as a search option. You can 
+for example load the alignment file into sublime or notepad, then
+search with regex and if the pattern is correct, it should only highlight 
+the desired class label. An example is shown in appendix~\ref{appendix}.
 
+Output
 
+The name of the CSV file, by default it will be created in the same folder as
+the sequence file.
+
+Delete
+
+Allows to overwrite existing CSV files.
 
 \section{SSR plot} \label{ssr_p}
+
+The 
 
 \subsection{Algorithm}
 
@@ -135,6 +154,40 @@ examples below should help to
 \subsection{Arguments}
 
 \section{Example} \label{example}
+
+\section{Appendix} \label{appendix}
+
+\subsection{Regex examples}
+
+% Example 1
+% 
+% > sequence1\_spec_ATP
+% > sequence2\_spec_ADP
+% > sequence3\_spec_ADP
+% > sequence4\_spec_ATP
+% > sequence5\_spec_ATP
+% 
+% Possible Regex: ''\_([ATDP]+)\$'' 
+% 
+% Example 2
+% 
+% > sequence1\#1
+% > sequence2\#3
+% > sequence3\#1
+% > sequence4\#3
+% > sequence5\#4
+% 
+% Possible Regex: ''\#([1-9])\$'' 
+% 
+% Example 1
+% 
+% > class:mm_sequence1
+% > class:mom_sequence2
+% > class:mm_sequence3
+% > class:mm_sequence4
+% > class:mal_sequence5
+% 
+% Possible Regex: ''class:([a-z]*)_'' 
 
 
 \end{document}
