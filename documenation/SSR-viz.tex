@@ -1,0 +1,189 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+%opening
+\title{SSR-viz - a toolbox to detect and visualize protein
+subfamily specific residues}
+\author{Paul Zierep}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+Protein families can often be further divide into 
+functional diverse subfamilies. Each subfamily posses very specific functions
+which distinguishes them from each other. Examples are substrate specificity,
+protein-protein interaction or different reaction types. In many cases these functions are
+based on a limited set of residues. Therefore, to understand the protein diversity,
+the identification of those residues is crucial.
+In order to support researchers in this task we developed a toolbox
+which allows to detect and visualize those residues, based on a multiple sequence 
+alignment of proteins with experimental validated functionality.
+
+\end{abstract}
+
+\section{Install}
+
+\todo{add paths to the install}
+
+SSR-viz in implemented as a standalone GUI framework. It is entirely 
+written in Python 3 and therefore the easiest way to obtain it is trough 
+PIP - the official python repository. 
+
+Additionally we implemented standalone 
+executables for Windows (tested on windows 10) and Linux (tested on Ubunt 16.04).
+These a much bigger then the pure python module, but ship everything needed out of
+the Box. 
+
+The only external tool needed is mafft, an excellent alignment tool which is 
+required to map protein structure indices to the alignment. SSR-viz runs
+without mafft, but for the \textbf{Add\_pdb} tool the mafft executable needs 
+to be assigned (see section~\ref{add_p}).
+
+
+\section{Getting started}
+
+The SSR-viz algorithm is based on a multiple sequence alignment (MSA) file in 
+FASTA format, which can be generated with various tools, such as Clustalo 
+and Mafft or with a Webserver such as (\todo{cite and add server}). 
+
+The topic of sequence alignment is beyond the scope of this manual.  
+Nevertheless one should keep in mind that 
+the quality of the alignment is crucial for the detection algorithm.
+(Is is difficult to interpret the importance of a position, which has
+more gaps then amino acids.)
+
+The first step is the classification of the sequences into subfamilies.
+This is undoubtedly the most difficult part, as it often requires 
+to identify the specific functionality based on scientific literature
+or even undertake experimental validation. Dedicated databases such as 
+\todo{add some DB} can help to identify 
+detailed protein functionality. 
+
+Even though there are various tools available that can cluster protein sequences, 
+these clustering methods always apply some kind of similarity scoring,
+which leads in most cases to a clustering based on evolutionary relationship 
+rather then functional similarity. 
+This is demonstrated on an example in section~\ref{example}.
+
+Ones you collected the class information of your sequences you can add
+them to your alignment. The \textbf{CSV\_Builder} tool allows to creates 
+a comma separated value (CSV) file which can be used to add the class label to the sequences
+(see section~\ref{csv_b}).
+
+An alignment and the CSV file is everything thats needed to 
+detect subfamily specific residues in the sequences. 
+The \textbf{SSR\_plot} tool handles the actual execution of the detection
+algorithm, the output can be a mathplotlib \todo{cite} style plot (see section~\ref{ssr_p})
+as pdf, a Javlview annotation file (which can show the results together with the 
+alignment) as well as a 'stats.csv' file which summarizes the SSRs.
+
+In many cases it is desired to observe the SSRs inside a protein 
+structure (if available). Therefore, we also developed a tool \textbf{Add\_pdb} which allows
+to map the indices of a protein structure file (*.pdb) to the indices of the 
+alignment in the ''stats.csv' file (see section~\ref{add_p})
+
+An overview chart which explains the setup of the three tools is shown in
+figure~\todo{figure}
+
+\section{CSV builder} \label{csv_b}
+
+The \textbf{CSV\_Builder} handles the input and takes care, 
+that the alignment and CSV class label file have the right formating.
+
+The mapping scheme is shown in Fig.~\todo{fig}.
+
+\subsection{Arguments}
+
+Input sequence alignment file
+
+The alignment file with the sequences of the family.
+The deisred format is in FASTA fromat (clustalo), see section~\ref{example}
+for an example.
+
+Inplace FASTA conversion / Temporary alignment file name
+
+The \textbf{CSV\_Builder} routine will remove duplicates from the 
+alignment, as multiple identical sequences will overestimate the importance
+of this subfamily. The alignment can be converted inplace, meaning
+the original alignment is overwritten or a new alignment can be 
+created.
+
+Regex extraction of the class label
+
+The normal \textbf{CSV\_Builder} routine will create a CSV file,
+with an empty column for the class labels. Which must be manually 
+filled.
+In some cases the class label is part of the sequence names,
+this labels can be extracted using regular expressions (regex) patterns.
+The entire scope of regex is to big for this manual, but the set of
+examples in the appendix~\ref{appendix} should help to get started. There are various 
+tools available which can be used to test regex before usage, most text editors 
+support regex as a search option. You can 
+for example load the alignment file into sublime or notepad, then
+search with regex and if the pattern is correct, it should only highlight 
+the desired class label. An example is shown in appendix~\ref{appendix}.
+
+Output
+
+The name of the CSV file, by default it will be created in the same folder as
+the sequence file.
+
+Delete
+
+Allows to overwrite existing CSV files.
+
+\section{SSR plot} \label{ssr_p}
+
+The 
+
+\subsection{Algorithm}
+
+\subsection{Arguments}
+
+\subsection{Output}
+
+\section{Add pdb} \label{add_p}
+
+\subsection{Arguments}
+
+\section{Example} \label{example}
+
+\section{Appendix} \label{appendix}
+
+\subsection{Regex examples}
+
+Example 1
+
+> sequence1_spec_ATP
+> sequence2_spec_ADP
+> sequence3_spec_ADP
+> sequence4_spec_ATP
+> sequence5_spec_ATP
+
+Possible Regex: ''\_([ATDP]+)\$'' 
+
+Example 2
+
+> sequence1#1
+> sequence2#3
+> sequence3#1
+> sequence4#3
+> sequence5#4
+
+Possible Regex: ''\#([1-9])\$'' 
+
+Example 1
+
+> class:mm_sequence1
+> class:mom_sequence2
+> class:mm_sequence3
+> class:mm_sequence4
+> class:mal_sequence5
+
+Possible Regex: ''class:([a-z]*)_'' 
+
+
+\end{document}
