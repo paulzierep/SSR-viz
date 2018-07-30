@@ -1,0 +1,40 @@
+\documentclass{article}
+\usepackage{amsfonts}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{tabularx}
+\usepackage{lscape}
+
+
+\begin{document}
+
+\begin{landscape}
+
+\begin{tabularx}{0.7\paperwidth}{l|X} \toprule
+    Feature &  Explanation \\ \midrule
+    Fasta conversation   & Removes duplicates from the FASTA \\ 
+    Regular expression extraction & Extracts the class label using a Regex \\ \bottomrule
+    
+\end{tabularx}
+
+\vspace{4cm} 
+
+\begin{tabularx}{0.7\paperwidth}{l|X} \toprule
+    Feature &  Explanation \\ \midrule
+    Class label  & The sequence can be ordered in different classes in the CSV file \\ 
+    Z-score threshold & Only residues with a higher Z-score are shown  \\ 
+    Best positions & Only the X best residues are shown  \\ 
+    Gab importance & Importance of Gaps in the scoring scheme \\
+    Substitution Matrix & Matrix used to measure the differences of amino acid types \\
+    Weight of the S. Matrix & The influence of the S. Matrix can be adjusted \\
+    Figure & The Mathplotlib plot can be highly customized \\
+    Window function & A window function (mean,max,min,std) can be applied to the plot to show general region of interest \\
+    One-vs-one scoring & Scoring of the classes against each other  \\
+    One-vs-all scoring & Scoring of each class against the rest \\ \bottomrule
+
+\end{tabularx}
+
+\end{landscape}
+
+\end{document}
+

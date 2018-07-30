@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=SSR-viz
+Comment=This is my comment
+Exec=/usr/local/bin/SSR-viz
+Icon=/usr/local/bin/icon.png
+Terminal=false
+Type=Application
+Categories=Utility;Application;

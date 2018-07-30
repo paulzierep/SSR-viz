@@ -338,6 +338,7 @@ def csv2discri_dict(DISCRI_CSV_PATH, INPUT_FASTA_ALIGNED_PATH, \
 					class_field = 'Class',
 					exclude=[''],
 					reduce_DB=False, #must be a integer, all classes with less items are removed.
+					verbose = False,
 					):
 
 	'''
@@ -365,27 +366,30 @@ def csv2discri_dict(DISCRI_CSV_PATH, INPUT_FASTA_ALIGNED_PATH, \
 			#############################
 
 			if not reader:
-				print('Csv could not be parsed !')
+				print('Error: Csv could not be parsed !')
 				exit()
 
 			test_reader = reader[0]
 
 			if name_field not in list(test_reader.keys()):
-				print(('No matching name filed in file, maybe it is one of those: {0}'.format(list(reader.keys()))))
+				print(('Error: No matching name filed in file, maybe it is one of those: {0}'.format(list(reader.keys()))))
 				exit()
 			if class_field not in list(test_reader.keys()):
-				print(('No matching class filed in file, maybe it is one of those: {0}'.format(list(reader.keys()))))
+				print(('Error: No matching class filed in file, maybe it is one of those: {0}'.format(list(reader.keys()))))
 				exit()
 
 			#############################
 			# parsing
 			#############################
 
+			if verbose:
+				print('\n ***Verbose **** \n Sequence parsing: \n')
 
 			for row in reader:
 
 				if row[class_field] in exclude:
-					print((str(row[name_field]) + ' discarded, due to exclusion creteria'))
+					if verbose:
+						print((str(row[name_field]) + ' discarded, due to exclusion creteria'))
 					continue
 
 				if row[class_field] not in list(discri_dict.keys()):		#add new key to discri dict for new class
@@ -398,10 +402,12 @@ def csv2discri_dict(DISCRI_CSV_PATH, INPUT_FASTA_ALIGNED_PATH, \
 						entry_matches = True							#only one Biopython obj can be assigned to the csv entry
 
 					elif entry.description == row[name_field] and entry_matches == True:
-						print(('Multiple matches between csv file and alignment' + entry.description + 'discarded'))
+						if verbose:
+							print(('Multiple matches between csv file and alignment' + entry.description + 'discarded'))
 
 				if entry_matches == False:
-					print(('No aligned sequence found for ' + row[name_field]))
+					if verbose:
+						print(('No aligned sequence found for ' + row[name_field]))
 					if not discri_dict[row[class_field]]: #if the seqeuence is the only one representing this discriminator, the discri is removed from the disrci dict
 						discri_dict.pop(row[class_field], None)
 

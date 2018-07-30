@@ -37,7 +37,8 @@ def load_default_args():
 	with open(TEMP_PATH, 'r') as fp:
 		data = json.load(fp) #load default args from json file
 
-		data['matrix'] = MI.available_matrices + ['basic','phys-chem'] #add matrices as default arguments
+		data['matrix'] = MI.available_matrices + ['phys-chem'] #add matrices as default arguments
+		#basic is removed as choice, a this is not needed with the new scoring scheme 
 		return(data)
 
 def convert_choice2list(args, unqiue_string):
@@ -98,17 +99,19 @@ class annotation and the corresponding alignment file''')
 	file_opts_g.add_argument(
 						'-o', '--output',
 						dest = 'output',
-						default = 'SSR_viz',
-						help= 'Name of the output folder for the created data',
+						default = 'Data',
+						help= '''Name of the output folder for the created data, this folder will
+be created in the same folder as the class label CSV file
+						''',
 						metavar = 'Data folder',
 						)
 
 	file_opts_g.add_argument(
 						'-p', '--plot',
 						dest = 'plot',
-						default = 'SSR_plot',
-						help= 'Name of the plot',
-						metavar = 'Plot name',
+						default = 'Project_01',
+						help= 'Name of the created files',
+						metavar = 'File name',
 						)
 
 	file_opts_g.add_argument(
@@ -119,6 +122,16 @@ class annotation and the corresponding alignment file''')
 						help= 'Allows to overwrite the created plots',
 						metavar = 'Overwrite',
 						)
+
+	file_opts_g.add_argument(
+					'-v', '--verbose',
+					metavar = 'Verbose Mode',
+					required=False,
+					dest = 'ver',
+					help='Shows additional details',
+					action='store_true',
+					default = False,
+					)
 
 	######################################################################################################
 	#algo_opts_p = subs.add_parser('Algorithm', help='Algorithm options')
@@ -137,25 +150,24 @@ class annotation and the corresponding alignment file''')
 						dest = 'best',
 						default = 10,
 						metavar = 'Best positions',
-						help='Mark only the best x positions in the plot, can be combined with the outliers'
+						help='Mark only the positions with the best X scores can be combined with the outliers'
 						)
 
 	algo_opts_g.add_argument('-gi','--gap_importance', 
 						metavar = 'Gap importance',
-						help='Change the importance of the gap in the weight matrix (default 1)',
+						help='Change the importance of the gap in the weight matrix (default 0)',
 						dest = 'gi',
-						default = 1,
+						default = 0.1,
 						)
 
 	algo_opts_g.add_argument('-ma','--matrix', 
 						help='''Use a replacement matrix (PAM, Blossom ....) to wight the replacement
-based on 'similarity' of the amino acids, see 
-http://biopython.org/DIST/docs/api/Bio.SubsMat.MatrixInfo-module.html
-for all possibilites''',
+based on 'similarity' of the amino acids, see http://biopython.org/DIST/docs/api/Bio.SubsMat.MatrixInfo-module.html
+for an explanation.''',
 						dest = 'matrix',
 						widget='Dropdown',
 						choices = default_args['matrix'],
-						default = 'basic',
+						default = 'phys-chem',
 						)
 
 	algo_opts_g.add_argument('-mw','--matrix_weigth', 
@@ -170,13 +182,12 @@ for all possibilites''',
 	fig_opts_g = parser.add_argument_group('Figure')
 
 	fig_opts_g.add_argument('-tl','--top_label', 
-					metavar = 'Place label on top',
-					help='''Places a lable on top of each plot (not the heatmap), 
-only works well for limited number of labels (<= 14),
-everything else is too much anyway !!''',
+					metavar = 'Remove label from top of the plot',
+					help='''Remove label from top of each plot,
+more then 14 are too many''',
 					action='store_true',
 					dest = 'tl',
-					default = None,
+					default = False,
 					)
 
 	fig_opts_g.add_argument('-fs_h','--fig_size_h', 
@@ -195,11 +206,20 @@ everything else is too much anyway !!''',
 
 	fig_opts_g.add_argument('-cs','--chuncksize', 
 						metavar = 'Chunk size of the figure',
-						help='''Number of positions per plot (default: 100),
-						use 'total' as argument to show the entire alignment in one plot''' ,
+						help='''Number of positions per plot slide (default: 100),
+use 'total' as argument to show the entire alignment in one plot''' ,
 						#action='store_true',
 						dest = 'cs',
 						default = 100,
+						)
+
+	fig_opts_g.add_argument('-tot','--total', 
+						metavar = 'Entire alignment in one plot',
+						help='''Automatically adjusts the chuncksize parameter to fit the entire plot in one page''' ,
+						#action='store_true',
+						dest = 'tot',
+						default = False,
+						action='store_true',
 						)
 
 
@@ -237,7 +257,7 @@ everything else is too much anyway !!''',
 
 	######################################################################################################
 	#special_opts_p = subs.add_parser('Special', help='Special options')
-	special_opts_g = parser.add_argument_group('Special')
+	special_opts_g = parser.add_argument_group('Additional output')
 
 	special_opts_g.add_argument(
 						'-jvp','--jv_plot', 
@@ -252,7 +272,8 @@ can be loaded into Jalview as alignment annotation''',
 	special_opts_g.add_argument(
 						'-stats','--plot_stats', 
 						metavar = 'Plot statistics',
-						help='''Creates a csv file with plot statistics''',
+						help='''Creates a csv file with plot statistics, this file 
+is needed to map possible structure indices to the alignment (-> Add_pdb)''',
 						action='store_true',
 						dest = 'stats',
 						default = None,
@@ -282,13 +303,14 @@ can be loaded into Jalview as alignment annotation''',
 						metavar = 'Window size',
 						help='Applies a window function of x positions to the plot(s)',
 						dest = 'win',
-						default = None,
+						default = 10,
 						)
 
 	plot_opts_g.add_argument('-wt','--window_type', 
 						metavar = 'Window type',
-						help='Type of the window function to apply (default: mean), other are: max, min, std',
+						help='Type of the window function to apply on the plot',
 						dest = 'win_t',
+						choices = ['mean', 'max', 'min', 'std'],
 						default = 'mean',
 						)
 
@@ -410,7 +432,7 @@ can be loaded into Jalview as alignment annotation''',
 
 
 	pr = pred_rule(file_path_dict, args.ali, remove_output = False) #init the object
-	pr.update_descri_dict(delimiter=',', name_field='Name', class_field=args.cl, exclude=[''])
+	pr.update_descri_dict(delimiter=',', name_field='Name', class_field=args.cl, exclude=[''], reduce_DB=False, verbose = args.ver)
 
 	print('''
 		#################################################################
@@ -425,7 +447,17 @@ can be loaded into Jalview as alignment annotation''',
 	# print('########################')
 	# print(args.matrix)
 
-	# exit()
+	#adjust the cs param.
+	if args.tot:
+		args.cs = 'total'
+
+	#arguments needs to be inverted to work correctly
+	args.tl = not args.tl
+
+	#adjust the win param.
+	if args.win == 0:
+		args.win = None
+
 
 	pr.update_prediction_rule('pssm_new', 
 										alignment_index = True,
@@ -466,6 +498,7 @@ can be loaded into Jalview as alignment annotation''',
 										stats_p = float(args.stats_p),
 										drop_class_label = args.no_cl_hm,
 										m_weigth = float(args.mw),
+										verbose = args.ver,
 										#command_line = command_line,
 										#jv_heatmap = args.jv_heatmap,
 

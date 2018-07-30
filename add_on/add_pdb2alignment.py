@@ -15,9 +15,9 @@ from Bio.SeqRecord import SeqRecord
 
 
 
-import argparse
-from gooey import Gooey
-from gooey import GooeyParser
+#import argparse
+# from gooey import Gooey
+# from gooey import GooeyParser
 
 #########################
 # Parsing
@@ -151,27 +151,30 @@ def mafft_add_seq(mafft_exe, alignment, seq2add, tmp):
 	Add a seq to the alignment, returns a map file path
 	'''
 	if not shutil.which(mafft_exe):
-		'mafft executables could not be found'
+		print('mafft executables could not be found')
+
+	added_alignment = seq2add.replace('.fasta', '') + '_added.fasta'
 
 	stdout,stderr = subprocess.Popen(
-		'{0} --anysymbol --addfull {1} --mapout --keeplength {2}'.format(
+		'{0} --anysymbol --addfull {1} --mapout --keeplength {2} > {3}'.format(
 			mafft_exe,
 			seq2add,
 			alignment,
+			added_alignment,
 			),
 			shell=True,
 			stdout=subprocess.PIPE,
 			stderr=subprocess.PIPE
 			).communicate()
 
-	print(stdout.decode('utf-8'))
-	print(stderr.decode('utf-8'))
+	#print(stdout.decode('utf-8'))
+	#print(stderr.decode('utf-8'))
 
 	map_file = seq2add + '.map'
 
 	return(map_file)
 
-def map2df(map_file):
+def map2df(map_file, seq_offset):
 
 	with open(map_file, 'r') as os_file:
 		lines = list(os_file.readlines())
@@ -187,7 +190,9 @@ def map2df(map_file):
 	#df_map['alignment'] = pd.to_numeric(df_map['alignment'], errors='coerce')
 	#df_map['alignment'].fillna(-1, inplace = True)
 	df_map.set_index('alignment' ,inplace = True)
-	#df_map.index = df_map.index.astype(int)
+
+	#here the pdb indices are corrected according to the offset
+	df_map['pdb'] = pd.to_numeric(df_map['pdb']) + seq_offset
 	return(df_map)
 
 def ali_pos2pdb(df, positions):
@@ -205,109 +210,132 @@ def ali_pos2pdb(df, positions):
 
 	return(df)
 
-# def pdb2seq(pdb, chain, tmp):
-# 	'''
-# 	Returns a sequence of the chain and pdb
-# 	'''
-
-# 	# print(chain)
-# 	# print(pdb)
-# 	# exit()
-
-# 	handle = open(pdb, "rU")
-	
-# 	# print(handle)
-# 	# print(list(SeqIO.parse(handle, "pdb-seqres")))
-# 	# exit()
-
-# 	for record in SeqIO.parse(handle, "pdb-seqres"):
-# 		# print(record)
-# 		# exit()
-# 		chain_pdb = record.annotations['chain'] #get the chain
-
-# 		if chain == chain_pdb:
-# 			f_name = pdb + '_' + chain
-# 			out_file = os.path.join(tmp, f_name + '.fasta')
-# 			with open(out_file, "w") as output_handle:
-# 				SeqIO.write(record, output_handle, "fasta")
-# 			return(out_file)
-
-# 	print('Chain not found in the {0} pdb file'.format(pdb))
-
 def pdb2seq(pdbFile, chain, tmp):
+	'''
+	Returns a sequence of the chain and pdb
+	'''
 
+	# print(chain)
+	# print(pdb)
+	# exit()
 
-	## First, open and parse the protein file
-	p = PDBParser(PERMISSIVE=1)
-	structure = p.get_structure(pdbFile, pdbFile)
-
-	## Now go through the hierarchy of the PDB file
-	##
-	## 1- Structure
-	##      2- Model
-	##          3- Chains
-	##              4- Residues
-	##
+	handle = open(pdbFile, "rU")
 	
-	if (len(list(structure))) > 1:
-		print('''Multiple structure parsing is not supported, plase create a pdb with only
-			one structure''')
-		exit()
+	# print(handle)
+	# print(list(SeqIO.parse(handle, "pdb-seqres")))
+	# exit()
+
+	#the atom parser adds an "X" for missing indices, but 
+	#needs to be adjusted to the offset.
+
+	for record in SeqIO.parse(handle, "pdb-atom"):
+
+		chain_pdb = record.annotations['chain'] #get the chain
+
+		if chain == chain_pdb:
+
+			#write the sequence in the pdb-atom
+			pdb_file_name = os.path.split(pdbFile)[-1].replace('.pdb', '')
+			f_name = pdb_file_name + '_' + chain
+			out_file = os.path.join(tmp, f_name + '.fasta')
+			with open(out_file, "w") as output_handle:
+				SeqIO.write(record, output_handle, "fasta")
+
+			#get the offset of the atom sequence
+
+			p = PDBParser(PERMISSIVE=1)
+			structure = p.get_structure(pdbFile, pdbFile)
+
+			if (len(list(structure))) > 1:
+				print('''Multiple structure parsing is not supported, plase create a pdb with only
+					one structure''')
+				exit()
+
+			for model in structure:
+				for pdb_chain in model:
+					chainID = pdb_chain.get_id()
+					if chainID == chain:
+						seq_offset = ((pdb_chain.get_list()[0]).get_id()[1]) - 1
+
+			return(out_file, seq_offset)
+
+	print('Chain not found in the {0} pdb file'.format(pdb))
+
+# def pdb2seq(pdbFile, chain, tmp):
 
 
-	for model in structure:
+# 	## First, open and parse the protein file
+# 	p = PDBParser(PERMISSIVE=1)
+# 	structure = p.get_structure(pdbFile, pdbFile)
 
-		for pdb_chain in model:
+# 	## Now go through the hierarchy of the PDB file
+# 	##
+# 	## 1- Structure
+# 	##      2- Model
+# 	##          3- Chains
+# 	##              4- Residues
+# 	##
+	
+# 	if (len(list(structure))) > 1:
+# 		print('''Multiple structure parsing is not supported, plase create a pdb with only
+# 			one structure''')
+# 		exit()
 
-			'''
-			Seqres does start at the beginning of the protein, but often only a certain 
-			part is shown in the pdb, therefore a certain number of - is added to the chain,
-			so that the correct number corresponds to the sequence
-			'''
 
-			#get real starting number in the pdb
-			number_in_pdb = ((pdb_chain.get_list()[0]).get_id()[1]) - 1
+# 	for model in structure:
 
-			#get gap to add to alignment
-			head_attachment = ''.join(['X' for x in range(number_in_pdb)])
+# 		for pdb_chain in model:
 
-			seq = list()
-			chainID = pdb_chain.get_id()
+# 			'''
+# 			Seqres does start at the beginning of the protein, but often only a certain 
+# 			part is shown in the pdb, therefore a certain number of "X" is added to the chain,
+# 			so that the correct number corresponds to the sequence
+# 			'''
 
-			if chain == chainID:
+# 			#get real starting number in the pdb
+# 			seq_offset = ((pdb_chain.get_list()[0]).get_id()[1]) - 1
 
-				for residue in pdb_chain:
-					## The test below checks if the amino acid
-					## is one of the 20 standard amino acids
-					## Some proteins have "UNK" or "XXX", or other symbols
-					## for missing or unknown residues
-					if is_aa(residue.get_resname(), standard=True):
-						seq.append(three_to_one(residue.get_resname()))
-					else:
-						seq.append("X")
+# 			#get gap to add to alignment
+# 			#head_attachment = ''.join(['X' for x in range(number_in_pdb)])
+
+# 			seq = list()
+# 			chainID = pdb_chain.get_id()
+
+# 			if chain == chainID:
+
+# 				for residue in pdb_chain:
+# 					## The test below checks if the amino acid
+# 					## is one of the 20 standard amino acids
+# 					## Some proteins have "UNK" or "XXX", or other symbols
+# 					## for missing or unknown residues
+# 					if is_aa(residue.get_resname(), standard=True):
+# 						seq.append(three_to_one(residue.get_resname()))
+# 					else:
+# 						seq.append("X")
 				 
-				## This line is used to display the sequence from each chain
+# 				## This line is used to display the sequence from each chain
 				 
-				print(">Chain_" + chainID + "\n" + str("".join(seq)))
+# 				#print(">Chain_" + chainID + "\n" + str("".join(seq)))
 				 
-				## The next two lines create a sequence object/record
-				## It might be useful if you want to do something with the sequence later
+# 				## The next two lines create a sequence object/record
+# 				## It might be useful if you want to do something with the sequence later
 				
-				final_seq = head_attachment + (str(''.join(seq)))
+# 				final_seq = (str(''.join(seq)))
+# 				#final_seq = #head_attachment + (str(''.join(seq)))
 
-				myProt = Seq(final_seq, IUPAC.protein)
-				record = SeqRecord(myProt, id=chainID, name="", description="")
+# 				myProt = Seq(final_seq, IUPAC.protein)
+# 				record = SeqRecord(myProt, id=chainID, name="", description="")
 				
-				pdb_file_name = os.path.split(pdbFile)[-1].replace('.pdb', '')
-				f_name = pdb_file_name + '_' + chain
+# 				pdb_file_name = os.path.split(pdbFile)[-1].replace('.pdb', '')
+# 				f_name = pdb_file_name + '_' + chain
 
-				out_file = os.path.join(tmp, f_name + '.fasta')
-				with open(out_file, "w") as output_handle:
-					SeqIO.write(record, output_handle, "fasta")
+# 				out_file = os.path.join(tmp, f_name + '.fasta')
+# 				with open(out_file, "w") as output_handle:
+# 					SeqIO.write(record, output_handle, "fasta")
 
-				return(out_file)
+# 				return(out_file, seq_offset)
 
-		print('Chain not found in the {0} pdb file'.format(pdbFile))
+# 		print('Chain not found in the {0} pdb file'.format(pdbFile))
 
 
 def add_pos2csv(csv_input, csv_output, map_df, pdb_path):
@@ -343,7 +371,7 @@ def add_pos2csv(csv_input, csv_output, map_df, pdb_path):
 		# print(selection['pdb'].index)
 		# print(df.index)
 
-		df[pdb_file] = selection['pdb']
+		df[pdb_file.replace('.pdb', '')] = selection['pdb']
 		# print(selection)
 		# print(df)
 		# exit()

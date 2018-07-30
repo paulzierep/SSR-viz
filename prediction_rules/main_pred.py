@@ -68,87 +68,87 @@ class pred_rule():
 		# initiate multi alignment and multi fasta
 		#############################
 
-		if self.multi_fasta:
+		# if self.multi_fasta:
+
+		# ###########################
+		# # If not specified the input type is guessed
+		# ###########################
+
+		# 	try:
+
+		# 		fasta_type, records = file_conversion.fasta_check(
+		# 			self.init_file_path)  # checks if raw or alignment
+
+		# 		if fasta_type == 'alignment':  # input is alignment
+
+		# 			# check if file does not already exsist
+		# 			if basic.create_file(self.alignment, remove=remove_output):
+		# 				records = domain_extractor.unique_sequence_list(
+		# 					records)  # check if records are unique in the list
+		# 				# creates the alignment file
+		# 				SeqIO.write(records, self.alignment, 'fasta')
+		# 			if basic.create_file(self.multi_fasta, remove=remove_output):
+		# 				domain_extractor.alignment2raw_fasta(
+		# 					self.alignment, self.multi_fasta)  # creates the raw file
+
+		# 		else:  # input is raw fasta
+
+		# 			# check if file does not already exsist
+		# 			if basic.create_file(self.multi_fasta, remove=remove_output):
+		# 				records = domain_extractor.unique_sequence_list(
+		# 					records)  # check if records are unique in the list
+		# 				# creates the raw file
+		# 				SeqIO.write(records, self.multi_fasta, 'fasta')
+		# 			# check if file does not already exsist
+		# 			if basic.create_file(self.alignment, remove=remove_output):
+		# 				domain_extractor.clustalo_alignment(
+		# 					self.multi_fasta, self.alignment)  # creates the alignment file
+
+		# 	except Exception as error:
+		# 		print(error)
+		# 		print('init_file could not be parsed')
+
+
+		#else:
 
 		###########################
-		# If not specified the input type is guessed
+		# If no multi-fasta only alignment is taken
 		###########################
 
-			try:
+		fasta_type, records = file_conversion.fasta_check(
+		self.init_file_path)  # checks if raw or alignment
 
-				fasta_type, records = file_conversion.fasta_check(
-					self.init_file_path)  # checks if raw or alignment
-
-				if fasta_type == 'alignment':  # input is alignment
-
-					# check if file does not already exsist
-					if basic.create_file(self.alignment, remove=remove_output):
-						records = domain_extractor.unique_sequence_list(
-							records)  # check if records are unique in the list
-						# creates the alignment file
-						SeqIO.write(records, self.alignment, 'fasta')
-					if basic.create_file(self.multi_fasta, remove=remove_output):
-						domain_extractor.alignment2raw_fasta(
-							self.alignment, self.multi_fasta)  # creates the raw file
-
-				else:  # input is raw fasta
-
-					# check if file does not already exsist
-					if basic.create_file(self.multi_fasta, remove=remove_output):
-						records = domain_extractor.unique_sequence_list(
-							records)  # check if records are unique in the list
-						# creates the raw file
-						SeqIO.write(records, self.multi_fasta, 'fasta')
-					# check if file does not already exsist
-					if basic.create_file(self.alignment, remove=remove_output):
-						domain_extractor.clustalo_alignment(
-							self.multi_fasta, self.alignment)  # creates the alignment file
-
-			except Exception as error:
-				print(error)
-				print('init_file could not be parsed')
-
-
+		if fasta_type != 'alignment':  # input is not  alignment
+			print('Error: Input file must be alignment')
 		else:
 
-			###########################
-			# If no multi-fasta only alignment is taken
-			###########################
+			if replace_ali:
+				self.alignment = self.init_file_path
+				records = domain_extractor.unique_sequence_list(
+					records)  # check if records are unique in the list
+				# creates the alignment file
+				SeqIO.write(records, self.alignment, 'fasta')
 
-			fasta_type, records = file_conversion.fasta_check(
-			self.init_file_path)  # checks if raw or alignment
-
-			if fasta_type != 'alignment':  # input is not  alignment
-				print('If multi fasta is not defined input file must be alignment')
 			else:
-
-				if replace_ali:
-					self.alignment = self.init_file_path
+				if basic.create_file(self.alignment, remove=remove_output):
 					records = domain_extractor.unique_sequence_list(
 						records)  # check if records are unique in the list
 					# creates the alignment file
 					SeqIO.write(records, self.alignment, 'fasta')
 
-				else:
-					if basic.create_file(self.alignment, remove=remove_output):
-						records = domain_extractor.unique_sequence_list(
-							records)  # check if records are unique in the list
-						# creates the alignment file
-						SeqIO.write(records, self.alignment, 'fasta')
-
 		#############################
 		# initiate hmmer profile
 		#############################
 
-		if self.hmmer:
-			try:
+		# if self.hmmer:
+		# 	try:
 
-				if basic.create_file(self.hmmer, remove=remove_output):
-					domain_extractor.hmm_build(self.alignment, self.hmmer)
+		# 		if basic.create_file(self.hmmer, remove=remove_output):
+		# 			domain_extractor.hmm_build(self.alignment, self.hmmer)
 
-			except Exception as error:
-				print(error)
-				print('hmmer could not be build')
+		# 	except Exception as error:
+		# 		print(error)
+		# 		print('hmmer could not be build')
 
 		#############################
 		# initiate prediction rules
@@ -159,13 +159,13 @@ class pred_rule():
 			basic.create_folder(
 				self.pred_rules, remove=remove_output, new_folder=False)
 
-		if self.pred_eval:
-			basic.create_folder(
-				self.pred_eval, remove=remove_output, new_folder=False)
+		# if self.pred_eval:
+		# 	basic.create_folder(
+		# 		self.pred_eval, remove=remove_output, new_folder=False)
 
-		if self.ref_seq:
-			basic.create_folder(
-				self.ref_seq, remove=remove_output, new_folder=False)
+		# if self.ref_seq:
+		# 	basic.create_folder(
+		# 		self.ref_seq, remove=remove_output, new_folder=False)
 
 	def get_csv(self, descri_regex, remove=False):
 		'''
@@ -179,7 +179,7 @@ class pred_rule():
 
 		self.descri_regex = descri_regex
 
-		bad_signes = ['\|', '\/', '\(', '\)'] 
+		#bad_signes = ['\|', '\/', '\(', '\)'] 
 		bad_signes = []
 
 		#some signes are not good input, so they are raplaced.
@@ -234,7 +234,7 @@ class pred_rule():
 	# 			self.multi_fasta, self.alignment)
 	# 		domain_extractor.hmm_build(self.alignment, self.hmmer)
 
-	def update_descri_dict(self, delimiter=',', name_field='Name', class_field='Class', exclude=[''], reduce_DB=False):
+	def update_descri_dict(self, delimiter=',', name_field='Name', class_field='Class', exclude=[''], reduce_DB=False, verbose = False):
 
 		'''
 		updates the descri_dict, based on the annotation in the discri_csv file
@@ -246,7 +246,8 @@ class pred_rule():
 															name_field=name_field,
 															class_field=class_field,
 															exclude=exclude,
-															reduce_DB=reduce_DB,)  # update discri dict with current annotation
+															reduce_DB=reduce_DB,
+															verbose=verbose)  # update discri dict with current annotation
 
 
 

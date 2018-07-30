@@ -36,8 +36,8 @@ def main():
 	parser = GooeyParser(
 
 		description='''The CSV_builder protocol can be used to create the csv annotation file,
-		 the SSR_plot protocol starts the plotting window, the Add_pdb protocol allows to add
-		 structure numbering to an '*.stats.csv' file''')
+the SSR_plot protocol starts the plotting window, the Add_pdb protocol allows to add
+structure numbering to an '*.stats.csv' file''')
 
 	subs = parser.add_subparsers(help='commands', dest='command')
 
@@ -145,6 +145,17 @@ such as notepad or sublime or online: https://regex101.com/
 						widget='FileChooser'
 						)
 
+	ssp_plot_parser_r.add_argument(
+					'-v', '--verbose',
+					metavar = 'Verbose Mode',
+					required=False,
+					dest = 'ver',
+					help='Shows additional details',
+					action='store_true',
+					default = False,
+					)
+
+
 
 	################################
 	# SSR add pdb to MSA
@@ -222,59 +233,10 @@ such as notepad or sublime or online: https://regex101.com/
 
 	args = parser.parse_args()
 
+
 	##################################
-	# Call the csv building routine
+	# Call the CSV_builder routine
 	##################################
-
-	# if args.command == 'CSV_builder':
-
-	# 	ALIGNMENT_PATH = os.path.join(os.path.dirname(args.input), args.ali)
-	# 	CSV_PATH = os.path.join(os.path.dirname(args.input), args.csv)
-
-	# 	file_path_dict = 	{	
-	# 						'multi_fasta':None, 
-	# 						'pred_eval':None,
-	# 						'ref_seq':None,
-	# 						'hmmer': None,
-	# 						'pred_rules':None,
-	# 						'alignment': ALIGNMENT_PATH, 
-	# 						'discri_csv':CSV_PATH, 
-	# 						}
-
-	# 	#print(args.ca)
-	# 	if not args.ca:
-
-	# 		print('''
-	# 		#################################################################
-	# 		Alignment file is being converted, output file:
-	# 		{0}
-	# 		#################################################################
-	# 		'''.format(args.input)
-	# 		)
-
-
-	# 		pr = pred_rule(file_path_dict, args.input, remove_output = args.delete, replace_ali = True) #init the object
-
-	# 	else:
-	# 		print('''
-	# 		#################################################################
-	# 		Alignment file is being converted, output file:
-	# 		{0}
-	# 		#################################################################
-	# 		'''.format(ALIGNMENT_PATH)
-	# 		)
-
-	# 		pr = pred_rule(file_path_dict, args.input, remove_output = args.delete) #init the object
-
-	# 	print('''
-	# 		#################################################################
-	# 		Class label (csv) file is being created, output file:
-	# 		{0}
-	# 		#################################################################
-	# 		'''.format(CSV_PATH)
-	# 		)
-
-	# 	pr.get_csv(descri_regex = args.regex, remove = args.delete) #create a csv file
 
 
 	if args.command == 'CSV_builder':
@@ -330,7 +292,7 @@ such as notepad or sublime or online: https://regex101.com/
 
 
 		pr = pred_rule(file_path_dict, args.ali, remove_output = False) #init the object
-		pr.update_descri_dict(delimiter=',', name_field='Name', class_field=args.cl, exclude=[''])
+		pr.update_descri_dict(delimiter=',', name_field='Name', class_field=args.cl, exclude=[''], reduce_DB=False, verbose = args.ver)
 
 		########################################
 		# call the next gooey as subprocess from here 
@@ -344,8 +306,12 @@ such as notepad or sublime or online: https://regex101.com/
 		default_args['classes'] = list(pr.discri_dict.keys())
 
 
-				#write a temp file with the default args as json
-		CURRENT_PATH = os.path.dirname(sys.argv[0])
+		#write a temp file with the default args as json
+		CURRENT_PATH = os.path.dirname(os.path.realpath(__file__)) # <-seems to be the better option when symlinks are involved 
+
+		#CURRENT_PATH = os.path.dirname(sys.argv[0])
+		
+		SSR_DRAW_PATH = os.path.join(CURRENT_PATH, 'SSR-viz-draw.py')
 		TEMP_PATH = os.path.join(CURRENT_PATH, 'ssp_viz_temp_params.txt')
 		with open(TEMP_PATH, 'w') as tmp:
 			json.dump(default_args, tmp)
@@ -358,10 +324,14 @@ such as notepad or sublime or online: https://regex101.com/
 		PYTHON_PATH = sys.executable
 		# print(PYTHON_PATH)
 		# print('hi')
-		process = Popen([PYTHON_PATH, 'SSR-viz-draw.py'], stdout=PIPE, stderr=PIPE)
+		
+		process = Popen([PYTHON_PATH, SSR_DRAW_PATH], stdout=PIPE, stderr=PIPE)
+		#process = Popen([PYTHON_PATH, 'SSR-viz-draw.py'], stdout=PIPE, stderr=PIPE)
 		output, error = process.communicate()
-		# print(output)
-		# print(error)
+
+		if args.ver:
+			print('\n ***Verbose **** \n SSR plotting subprocess: \n Output: {0} \n Error: {1}'.format(output, error))
+
 
 	##################################
 	# Call add pdb routine
@@ -369,9 +339,19 @@ such as notepad or sublime or online: https://regex101.com/
 
 	if args.command == 'Add_pdb':
 
-		seq = add_pdb2alignment.pdb2seq(args.pdb, args.chain, args.temp)
+		seq, seq_offset = add_pdb2alignment.pdb2seq(args.pdb, args.chain, args.temp)
+
+		print('''
+		#################################################################
+		The 3D structure (ATOM records) starts with the index {0},
+		the Indices are adjusted accordingly.
+		#################################################################
+		'''.format(str(seq_offset + 1))
+		)
+
+
 		map_file = add_pdb2alignment.mafft_add_seq(args.mafft, args.ali, seq, args.temp)
-		map_df = add_pdb2alignment.map2df(map_file)
+		map_df = add_pdb2alignment.map2df(map_file, seq_offset)
 		add_pdb2alignment.add_pos2csv(args.i_csv, args.o_csv, map_df, args.pdb)
 
 		print('''

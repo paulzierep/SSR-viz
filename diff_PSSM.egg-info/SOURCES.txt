@@ -1,6 +1,0 @@
-README.md
-setup_pypi.py
-diff_PSSM.egg-info/PKG-INFO
-diff_PSSM.egg-info/SOURCES.txt
-diff_PSSM.egg-info/dependency_links.txt
-diff_PSSM.egg-info/top_level.txt
