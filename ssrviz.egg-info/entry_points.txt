@@ -1,0 +1,3 @@
+[console_scripts]
+ssrviz = ssrviz.ssrviz_script:main
+

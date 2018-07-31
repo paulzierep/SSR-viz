@@ -1,8 +1,0 @@
-setup.py
-gooey_parser_test.egg-info/PKG-INFO
-gooey_parser_test.egg-info/SOURCES.txt
-gooey_parser_test.egg-info/dependency_links.txt
-gooey_parser_test.egg-info/requires.txt
-gooey_parser_test.egg-info/top_level.txt
-gooey_tests/__init__.py
-gooey_tests/gooey_tests.py

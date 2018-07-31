@@ -2,6 +2,8 @@ data/
 dist/
 build/
 test_data/
-biovec.egg-info
+biovec.egg-info/
+dist_tests/
+test_ssrviz/
 *__pycache__
 *pyc

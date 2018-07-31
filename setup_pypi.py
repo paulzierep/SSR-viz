@@ -40,15 +40,38 @@ if sys.platform == "win32":
 
 #additional_mods = ['numpy.core._methods', 'numpy.lib.format']
 
-setup(  name = "sspviz",
-        version = "0.1",
-        description = "Build CSV GUI application",
-        #options = {"build_exe": build_exe_options},
-        url = 'http://www.pharmazeutische-bioinformatik.de/',
-        author='Paul Zierep',
-      	author_email='Paul.Zierep@googlemail.com',
-        packages = setuptools.find_packages()
-        )
-      	#executables = [Executable("SSP-viz-draw.py", base=base)])
-		#executables = [Executable("SSP-viz.py", base=base), Executable("SSP-viz-draw.py", base=base)])
-        #executables = [Executable("build_csv_gui.py", base=base), Executable("plot_dpssm_gui.py", base=base)])
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
+setup(
+   name = "ssrviz",
+    version = "0.1",
+    description = "Subfamily specific residue (ssr) detection and visualization toolbox",
+    #options = {"build_exe": build_exe_options},
+    url = 'http://phabi.de/',
+    author='Paul Zierep',
+    author_email='Paul.Zierep@googlemail.com',
+    #packages=['ssrviz'], <- this is automatically done by setuptools.find_packages() looking for the man
+
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+
+    #packages needed !
+    install_requires=[
+      'biopython>=1.70',
+      'numpy>=1.14.3',
+      'scipy>=1.1.0',
+      'matplotlib>=2.2.2',
+      'natsort>=5.3.0',
+      'Gooey==1.0.0', 
+      'pandas>=0.21.0'
+    ],
+
+    packages = setuptools.find_packages(),
+
+    #this allows to call the package from the command line
+    entry_points ={'console_scripts': ['ssrviz=ssrviz.ssrviz_script:main',],}
+    )
+  	#executables = [Executable("SSP-viz-draw.py", base=base)])
+	#executables = [Executable("SSP-viz.py", base=base), Executable("SSP-viz-draw.py", base=base)])
+    #executables = [Executable("build_csv_gui.py", base=base), Executable("plot_dpssm_gui.py", base=base)])
