@@ -308,14 +308,14 @@ such as notepad or sublime or online: https://regex101.com/
 
 		#write a temp file with the default args as json
 
-		print('Current Paths:')
+		#print('Current Paths:')
 		CURRENT_PATH = os.path.dirname(os.path.realpath(__file__)) # <-seems to be the better option when symlinks are involved 
 
-		print(CURRENT_PATH)
+		#print(CURRENT_PATH)
 
-		CURRENT_PATH = os.path.dirname(sys.argv[0])
+		#CURRENT_PATH = os.path.dirname(sys.argv[0])
 		
-		print(CURRENT_PATH)
+		#print(CURRENT_PATH)
 
 		SSR_DRAW_PATH = os.path.join(CURRENT_PATH, 'ssrviz_draw.py')
 		TEMP_PATH = os.path.join(CURRENT_PATH, 'ssp_viz_temp_params.txt')
@@ -331,18 +331,18 @@ such as notepad or sublime or online: https://regex101.com/
 		# Call the script when not intalled
 		################
 
-		# PYTHON_PATH = sys.executable
-		# process = Popen([PYTHON_PATH, SSR_DRAW_PATH], stdout=PIPE, stderr=PIPE)
+		PYTHON_PATH = sys.executable
+		process = Popen([PYTHON_PATH, SSR_DRAW_PATH], stdout=PIPE, stderr=PIPE)
 
 		################
 		# Call the executable when installed
 		################
 
-		process_call = os.path.join(CURRENT_PATH, 'ssrviz_draw')
+		#process_call = os.path.join(CURRENT_PATH, 'ssrviz_draw')
 
-		print(process_call)
+		#print(process_call)
 
-		process = Popen(process_call, stdout=PIPE, stderr=PIPE)
+		#process = Popen(process_call, stdout=PIPE, stderr=PIPE)
 
 		#process = Popen([PYTHON_PATH, 'SSR-viz-draw.py'], stdout=PIPE, stderr=PIPE)
 		output, error = process.communicate()
