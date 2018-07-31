@@ -17,10 +17,10 @@ if not sys.warnoptions:
 #import the prediction_rule object and give some 
 #arguments via commandline
 
-from prediction_rules.main_pred import pred_rule
-from prediction_rules.csv_builder import csv_builder
+from .prediction_rules.main_pred import pred_rule
+from .prediction_rules.csv_builder import csv_builder
 
-from add_on import add_pdb2alignment
+from .add_on import add_pdb2alignment
 
 from gooey import Gooey
 from gooey import GooeyParser
@@ -307,10 +307,16 @@ such as notepad or sublime or online: https://regex101.com/
 
 
 		#write a temp file with the default args as json
-		#CURRENT_PATH = os.path.dirname(os.path.realpath(__file__)) # <-seems to be the better option when symlinks are involved 
+
+		print('Current Paths:')
+		CURRENT_PATH = os.path.dirname(os.path.realpath(__file__)) # <-seems to be the better option when symlinks are involved 
+
+		print(CURRENT_PATH)
 
 		CURRENT_PATH = os.path.dirname(sys.argv[0])
 		
+		print(CURRENT_PATH)
+
 		SSR_DRAW_PATH = os.path.join(CURRENT_PATH, 'ssrviz_draw.py')
 		TEMP_PATH = os.path.join(CURRENT_PATH, 'ssp_viz_temp_params.txt')
 		with open(TEMP_PATH, 'w') as tmp:
@@ -333,6 +339,9 @@ such as notepad or sublime or online: https://regex101.com/
 		################
 
 		process_call = os.path.join(CURRENT_PATH, 'ssrviz_draw')
+
+		print(process_call)
+
 		process = Popen(process_call, stdout=PIPE, stderr=PIPE)
 
 		#process = Popen([PYTHON_PATH, 'SSR-viz-draw.py'], stdout=PIPE, stderr=PIPE)

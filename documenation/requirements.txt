@@ -26,3 +26,6 @@ sudo cp ~/GitRepos/SSR-viz/ssr-viz.desktop ./ #make it an application
 
 sudo apt-get install libwebkitgtk-dev libgtk2.0-dev libsdl1.2-dev freeglut3 freeglut3-dev libnotify-dev libgstreamerd-3-dev libgl1-mesa-glx libglu1-mesa libgl1-mesa-dev libglu1-mesa-dev libgconf2-dev libsdl1.2-dev zlib1g-dev libjpeg62-dev
 
+#tkinter
+
+sudo apt-get install python3-tk

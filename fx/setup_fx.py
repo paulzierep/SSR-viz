@@ -6,10 +6,6 @@ from cx_Freeze import setup, Executable
 import os
 import gooey
 
-PYTHON_INSTALL_DIR = os.path.dirname(os.path.dirname(os.__file__))
-os.environ['TCL_LIBRARY'] = os.path.join(PYTHON_INSTALL_DIR, 'tcl', 'tcl8.6')
-os.environ['TK_LIBRARY'] = os.path.join(PYTHON_INSTALL_DIR, 'tcl', 'tk8.6')
-
 def get_resources():
     target_prefix = 'gooey'
     source_dir = os.path.dirname(gooey.__file__)
@@ -23,18 +19,15 @@ def get_resources():
             includes.append((file_path, relative_path))
     return(includes)
 
-dlls = [
-os.path.join(PYTHON_INSTALL_DIR, 'DLLs', 'tk86t.dll'),
-os.path.join(PYTHON_INSTALL_DIR, 'DLLs', 'tcl86t.dll'),]
-
 # Dependencies are automatically detected, but it might need fine tuning.
-build_exe_options = {"packages": ["os"], 'includes':[
+build_exe_options = {"packages": ["os"], 
+ 'includes':[
  'numpy.core._methods',
  'numpy.lib.format',
  'matplotlib.backends.backend_tkagg',
- 'scipy.sparse.csgraph._validation',
+ "tkinter",
  ],
- 'include_files': get_resources() + dlls, 
+ 'include_files': get_resources(), 
  #"excludes": ["PyQt4"]
  }
 
@@ -48,11 +41,11 @@ if sys.platform == "win32":
 
 setup(  name = "ssrviz",
         version = "0.1",
-        description =  "Subfamily specific residue (ssr) detection and visualization toolbox",
+        description = "Subfamily specific residue (ssr) detection and visualization toolbox",
         options = {"build_exe": build_exe_options},
-        url = 'http://www.pharmazeutische-bioinformatik.de/',
+        url = 'http://phabi.de/',
         author='Paul Zierep',
       	author_email='Paul.Zierep@googlemail.com',
       	#executables = [Executable("SSP-viz-draw.py", base=base)])
-		executables = [Executable("ssrviz.py", base=base), Executable("ssrviz_draw.py", base=base)])
+		executables = [Executable("ssrviz_draw.py", base=base), Executable("ssrviz.py", base=base)])
         #executables = [Executable("build_csv_gui.py", base=base), Executable("plot_dpssm_gui.py", base=base)])
