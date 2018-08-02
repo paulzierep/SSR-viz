@@ -1,1 +1,0 @@
-{"class": "Class (more then 10)", "csv": "/home/paul/GitRepos/SSR-viz/test_data/NRPS/NRPS_discri.csv", "classes": ["V", "Y", "S", "D", "G", "dhb", "dhpg", "dhbu", "K", "R", "L", "C", "E", "bht", "I", "pip", "dab", "N", "A", "orn", "Q", "T", "W", "P", "F", "hpg", "aad", "H", "horn"], "alignment": "/home/paul/GitRepos/SSR-viz/test_data/NRPS/NRPS_alignment.fasta"}
