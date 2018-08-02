@@ -35,6 +35,7 @@ import os
 # GUI applications require a different base on Windows (the default is for a
 # console application).
 base = None
+#entry_points = {'console_scripts': ['ssrviz=ssrviz.ssrviz:main'],}
 if sys.platform == "win32":
     base = "Win32GUI"
 
@@ -45,7 +46,7 @@ with open("README.md", "r") as fh:
 
 setup(
    name = "ssrviz",
-    version = "0.1.2.4",
+    version = "0.1.2.10",
     description = "Subfamily specific residue (ssr) detection and visualization toolbox",
     #options = {"build_exe": build_exe_options},
     url = 'http://phabi.de/',
@@ -69,9 +70,11 @@ setup(
 
     packages = setuptools.find_packages(exclude=['fx']),
 
+
+    #scripts=['ssrviz_gui'],
     #this allows to call the package from the command line
-    entry_points ={'console_scripts': ['ssrviz=ssrviz.ssrviz:main'],}
+    #entry_points = {} 
+    entry_points = {'gui_scripts': ['ssrviz=ssrviz.ssrviz_sub:main'],}
+
     )
-  	#executables = [Executable("SSP-viz-draw.py", base=base)])
-	#executables = [Executable("SSP-viz.py", base=base), Executable("SSP-viz-draw.py", base=base)])
-    #executables = [Executable("build_csv_gui.py", base=base), Executable("plot_dpssm_gui.py", base=base)])
+

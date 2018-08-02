@@ -12,14 +12,14 @@ import pickle
 import copy
 
 # custom functions
-from . import domain_extractor
+from prediction_rules import domain_extractor
 
 import sys
 #sys.path.append('../')
-from .basic import basic
-from .basic import file_conversion
+from prediction_rules.basic import basic
+from prediction_rules.basic import file_conversion
 
-from . import prediction_rules
+from prediction_rules import prediction_rules
 #import eval_pred_rule
 #import reference
 

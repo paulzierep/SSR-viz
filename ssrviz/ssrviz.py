@@ -17,10 +17,12 @@ if not sys.warnoptions:
 #import the prediction_rule object and give some 
 #arguments via commandline
 
-from .prediction_rules.main_pred import pred_rule
-from .prediction_rules.csv_builder import csv_builder
+#print(sys.path)
 
-from .add_on import add_pdb2alignment
+from prediction_rules.main_pred import pred_rule
+from prediction_rules.csv_builder import csv_builder
+
+from add_on import add_pdb2alignment
 
 from gooey import Gooey
 from gooey import GooeyParser
