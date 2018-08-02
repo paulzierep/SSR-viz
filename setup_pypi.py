@@ -45,7 +45,7 @@ with open("README.md", "r") as fh:
 
 setup(
    name = "ssrviz",
-    version = "0.1.2.5",
+    version = "0.1.2.4",
     description = "Subfamily specific residue (ssr) detection and visualization toolbox",
     #options = {"build_exe": build_exe_options},
     url = 'http://phabi.de/',
@@ -70,7 +70,7 @@ setup(
     packages = setuptools.find_packages(exclude=['fx']),
 
     #this allows to call the package from the command line
-    entry_points ={'console_scripts': ['ssrviz=ssrviz.ssrviz:main',],}
+    entry_points ={'console_scripts': ['ssrviz=ssrviz.ssrviz:main'],}
     )
   	#executables = [Executable("SSP-viz-draw.py", base=base)])
 	#executables = [Executable("SSP-viz.py", base=base), Executable("SSP-viz-draw.py", base=base)])

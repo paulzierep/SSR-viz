@@ -19,6 +19,12 @@ def get_resources():
             includes.append((file_path, relative_path))
     return(includes)
 
+
+
+shared_libs = [
+				('/usr/lib/x86_64-linux-gnu/libpng12.so.0','lib/wx/libpng12.so.0'), #if libs are missing, just add it !
+				]
+
 # Dependencies are automatically detected, but it might need fine tuning.
 build_exe_options = {"packages": ["os"], 
  'includes':[
@@ -27,7 +33,7 @@ build_exe_options = {"packages": ["os"],
  'matplotlib.backends.backend_tkagg',
  "tkinter",
  ],
- 'include_files': get_resources(), 
+ 'include_files': get_resources() + shared_libs, 
  #"excludes": ["PyQt4"]
  }
 

@@ -1,6 +1,11 @@
 \documentclass[a4paper,10pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+
+\usepackage{minted}
+
+\usepackage{hyperref}
+
 %opening
 \title{SSR-viz - a toolbox to detect and visualize protein
 subfamily specific residues}
@@ -26,6 +31,7 @@ alignment of proteins with experimental validated functionality.
 
 \pagebreak
 \tableofcontents
+\pagebreak
 
 
 \section{Install}
@@ -34,7 +40,37 @@ alignment of proteins with experimental validated functionality.
 
 SSR-viz in implemented as a standalone GUI framework. It is entirely 
 written in Python 3 and therefore the easiest way to obtain it is trough 
-PIP - the official python repository. 
+PIP - the official python repository. For Debian bases systems and Ubuntu:
+
+\begin{minted}{bash}
+pip3 install ssrviz
+\end{minted}
+
+Should be enough ... in general. Some packages, especially \textbf{wxPython} 
+which are normally automatically installed
+by PIP can make problems, as they are using system dependent, which can 
+lead to errors when the dependencys are missing. 
+
+Good advice to install wxPython can be 
+found at: \url{https://wxpython.org/pages/downloads/index.html}.
+They also supply custom builds which work on Ubuntu 16.04 and various other
+Linux systems.
+
+Nevertheless wxPython needs some system dependencys on Linux:
+They can be easily installed for Ubuntu 16.04 the packages would be:
+
+\begin{minted}{bash}
+sudo apt-get install libwebkitgtk-dev libgtk2.0-dev libsdl1.2-dev \
+freeglut3 freeglut3-dev libnotify-dev libgstreamerd-3-dev \
+libgl1-mesa-glx libglu1-mesa libgl1-mesa-dev libglu1-mesa-dev \
+libgconf2-dev libsdl1.2-dev zlib1g-dev libjpeg62-dev
+\end{minted}
+
+In some cases the \textbf{matplotlib} might also need some Help with \textbf{tkinter}.
+
+\begin{minted}{bash}
+sudo apt-get install python3-tk
+\end{minted}
 
 Additionally we implemented standalone 
 executables for Windows (tested on windows 10) and Linux (tested on Ubunt 16.04).
@@ -45,6 +81,10 @@ The only external tool needed is mafft, an excellent alignment tool which is
 required to map protein structure indices to the alignment. SSR-viz runs
 without mafft, but for the \textbf{Add\_pdb} tool the mafft executable needs 
 to be assigned (see section~\ref{add_p}).
+
+Dnt't worry mafft is easy to install:
+
+\url{https://mafft.cbrc.jp/alignment/software/}
 
 
 \section{Getting started}
@@ -101,22 +141,24 @@ The mapping scheme is shown in Fig.~\todo{fig}.
 
 \subsection{Arguments}
 
-\subsubsection{Input sequence alignment file}
+\begin{description}
 
+\item[\texttt{Input sequence alignment file}] \hfill \\
+ 
 The alignment file with the sequences of the family.
 The deisred format is in FASTA fromat (clustalo), see section~\ref{example}
 for an example.
 
-Inplace FASTA conversion / Temporary alignment file name
-
+\item[\texttt{Inplace FASTA conversion / Temporary alignment file name}] \hfill \\
+ 
 The \textbf{CSV\_Builder} routine will remove duplicates from the 
 alignment, as multiple identical sequences will overestimate the importance
 of this subfamily. The alignment can be converted inplace, meaning
 the original alignment is overwritten or a new alignment can be 
 created.
 
-Regex extraction of the class label
-
+\item[\texttt{Regex extraction of the class label}] \hfill \\
+ 
 The normal \textbf{CSV\_Builder} routine will create a CSV file,
 with an empty column for the class labels. Which must be manually 
 filled.
@@ -130,14 +172,17 @@ for example load the alignment file into sublime or notepad, then
 search with regex and if the pattern is correct, it should only highlight 
 the desired class label. An example is shown in appendix~\ref{appendix}.
 
-Output
+\item[\texttt{Output}] \hfill \\
 
 The name of the CSV file, by default it will be created in the same folder as
 the sequence file.
 
-Delete
+\item[\texttt{Delete}] \hfill \\
 
 Allows to overwrite existing CSV files.
+
+\end{description}
+
 
 \section{SSR plot} \label{ssr_p}
 
