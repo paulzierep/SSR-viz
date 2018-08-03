@@ -29,8 +29,9 @@ from gooey import GooeyParser
 
 from subprocess import Popen, PIPE
 
-#import tempfile
+import tempfile
 import json
+
 
 @Gooey(program_name='SSR-viz')
 def main():
@@ -320,9 +321,21 @@ such as notepad or sublime or online: https://regex101.com/
 		#print(CURRENT_PATH)
 
 		SSR_DRAW_PATH = os.path.join(CURRENT_PATH, 'ssrviz_draw.py')
-		TEMP_PATH = os.path.join(CURRENT_PATH, 'ssp_viz_temp_params.txt')
+
+		TEMP_FOLDER = tempfile.gettempdir()
+
+		TEMP_PATH = os.path.join(TEMP_FOLDER, 'ssr_viz_temp_params.txt')
 		with open(TEMP_PATH, 'w') as tmp:
 			json.dump(default_args, tmp)
+
+
+		print('''
+			#################################################################
+			Temp parameters for ssrviz_draw written to
+			{0}
+			#################################################################
+			'''.format(TEMP_PATH)
+			)
 
 		#execute the next gooey window in seperate process
 		#if the files are scripts this should be the python script

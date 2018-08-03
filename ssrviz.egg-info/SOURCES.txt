@@ -1,6 +1,5 @@
 README.md
 setup_pypi.py
-ssrviz_gui
 fx/setup_fx.py
 fx/setup_fx_win.py
 fx/ssrviz.py

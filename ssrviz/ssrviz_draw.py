@@ -3,6 +3,7 @@
 
 import os
 import argparse
+import tempfile
 #from pssm_lib.main_pred import pred_rule
 
 
@@ -32,8 +33,9 @@ def load_default_args():
 	'''
 	Load the def. args from a file, so that choices can be tickable
 	'''
-	CURRENT_PATH = os.path.dirname(sys.argv[0])
-	TEMP_PATH = os.path.join(CURRENT_PATH, 'ssp_viz_temp_params.txt')
+	#CURRENT_PATH = os.path.dirname(sys.argv[0])
+	TEMP_FOLDER = tempfile.gettempdir()
+	TEMP_PATH = os.path.join(TEMP_FOLDER, 'ssr_viz_temp_params.txt')
 	with open(TEMP_PATH, 'r') as fp:
 		data = json.load(fp) #load default args from json file
 

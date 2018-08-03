@@ -46,13 +46,13 @@ if sys.platform == "win32":
 
 #additional_mods = ['numpy.core._methods', 'numpy.lib.format']
 
-setup(  name = "diff-PSSM",
+setup(  name = "ssrviz",
         version = "0.1",
-        description = "Build CSV GUI application",
+        description = "Subfamily specific residue (ssr) detection and visualization toolbox",
         options = {"build_exe": build_exe_options},
         url = 'http://www.pharmazeutische-bioinformatik.de/',
         author='Paul Zierep',
       	author_email='Paul.Zierep@googlemail.com',
       	#executables = [Executable("SSP-viz-draw.py", base=base)])
-		executables = [Executable("SSP-viz.py", base=base), Executable("SSP-viz-draw.py", base=base)])
+		executables = [Executable("ssrviz.py", base=base), Executable("ssrviz_draw.py", base=base)])
         #executables = [Executable("build_csv_gui.py", base=base), Executable("plot_dpssm_gui.py", base=base)])

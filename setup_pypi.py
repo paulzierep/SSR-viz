@@ -46,7 +46,7 @@ with open("README.md", "r") as fh:
 
 setup(
    name = "ssrviz",
-    version = "0.1.2.10",
+    version = "0.1.2.12",
     description = "Subfamily specific residue (ssr) detection and visualization toolbox",
     #options = {"build_exe": build_exe_options},
     url = 'http://phabi.de/',

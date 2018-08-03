@@ -29,3 +29,8 @@ sudo apt-get install libwebkitgtk-dev libgtk2.0-dev libsdl1.2-dev freeglut3 free
 #tkinter
 
 sudo apt-get install python3-tk
+
+#wxpython -> mac
+
+brew install wxpython
+
