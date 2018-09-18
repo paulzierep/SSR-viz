@@ -1,3 +1,0 @@
-[gui_scripts]
-ssrviz = ssrviz.ssrviz_sub:main
-
