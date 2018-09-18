@@ -17,17 +17,14 @@ subfamily specific residues}
 
 \begin{abstract}
 
-Protein families can often be further divide into 
-functional diverse subfamilies. Each subfamily posses very specific functions
-which distinguishes them from each other. Examples are substrate specificity,
-protein-protein interaction or different reaction types. In many cases these functions are
-based on a limited set of residues. Therefore, to understand the protein diversity,
-the identification of those residues is crucial.
-In order to support researchers in this task we developed a toolbox
-which allows to detect and visualize those residues, based on a multiple sequence 
-alignment of proteins with experimental validated functionality.
 
 \end{abstract}
+
+Homologous proteins can be classified into protein families. The members of a family share a similar structure and sequence. Despite their inherent
+similarity, individual members of the same family can adopt very specific functions, leading to a further division into subfamilies. These functional
+differences can often be assigned to specific residues. This information can be used for various applications, such as function-based subfamily
+classification, rational site-directed mutagenesis and general elucidation of mechanisms of action. Here we introduce a novel user-friendly open-source
+software which allows for the identification and visualization of these residues.
 
 \pagebreak
 \tableofcontents
@@ -36,38 +33,28 @@ alignment of proteins with experimental validated functionality.
 
 \section{Installation}
 
+\subsection{Using Pip}
+
 SSR-viz in implemented as a standalone GUI framework. It is entirely 
 written in Python 3. The program was successfully installed on
-Ubuntu 14.04/16.04 /18.04; Windows 10/8 and MacOS Sierra. But the 
-installation can be 
-
-
-It can be installed via PIP - the official python repository, using the 
-
-\texttt{pip3 install ssrviz}
-
-Or cloned from GitHub \todo{}
-
-
-and therefore the easiest way to obtain it is trough 
-PIP - the official python repository. For Debian bases systems and Ubuntu:
+Ubuntu 14.04/16.04/18.04 and Windows 10/8. It can be installed via PIP - the official python repository. 
+To install SSR-viz open a terminal an type: 
 
 \begin{minted}{bash}
 pip3 install ssrviz
 \end{minted}
 
-Should be enough ... in general. Some packages, especially \textbf{wxPython} 
+Some packages, especially \textbf{wxPython} 
 which are normally automatically installed
-by PIP can make problems, as they are using system dependent, which can 
-lead to errors when the dependencys are missing. 
-
+by PIP can make problems, as they are using system dependencies, which can 
+lead to errors when missing. 
 Good advice to install wxPython can be 
 found at: \url{https://wxpython.org/pages/downloads/index.html}.
 They also supply custom builds which work on Ubuntu 16.04 and various other
 Linux systems.
 
-Nevertheless wxPython needs some system dependencys on Linux:
-They can be easily installed for Ubuntu 16.04 the packages would be:
+Nevertheless wxPython needs some system dependencies on Linux:
+They can be easily installed for Ubuntu 16.04:
 
 \begin{minted}{bash}
 sudo apt-get install libwebkitgtk-dev libgtk2.0-dev libsdl1.2-dev \
@@ -82,26 +69,39 @@ In some cases the \textbf{matplotlib} might also need some Help with \textbf{tki
 sudo apt-get install python3-tk
 \end{minted}
 
+Installation via Pip for Windows should work without additional installations.
+
+\subsection{Clone from GitHub}
+
+It can also be cloned from GitHub \url{https://github.com/PhaBiFreiburg/SSR-viz}.
+But then the dependencies need to be installed manually, 
+see: \\
+SSR-viz/documenation/requirements.txt
+
+\subsection{Standalone executables (easy but big)}
+
 Additionally we implemented standalone 
 executables for Windows (tested on windows 10) and Linux (tested on Ubunt 16.04).
 These a much bigger then the pure python module, but ship everything needed out of
 the Box. 
 
+\subsection{Mafft}
+
 The only external tool needed is mafft, an excellent alignment tool which is 
 required to map protein structure indices to the alignment. SSR-viz runs
 without mafft, but for the \textbf{Add\_pdb} tool the mafft executable needs 
 to be assigned (see section~\ref{add_p}).
-
-Dnt't worry mafft is easy to install:
+Dont't worry mafft is easy to install on all systems:
 
 \url{https://mafft.cbrc.jp/alignment/software/}
-
 
 \section{Getting started}
 
 The SSR-viz algorithm is based on a multiple sequence alignment (MSA) file in 
 FASTA format, which can be generated with various tools, such as Clustalo 
-and Mafft or with a Webserver such as (\todo{cite and add server}). 
+and Mafft or with a Webserver such as 
+\href{https://zeus.cmm.msu.ru/#scenario=2}{Mustguseal} or 
+\href{http://prodata.swmed.edu/promals3d/promals3d.php}{PROMALS3D}.
 
 The topic of sequence alignment is beyond the scope of this manual.  
 Nevertheless one should keep in mind that 
@@ -109,11 +109,15 @@ the quality of the alignment is crucial for the detection algorithm.
 (Is is difficult to interpret the importance of a position, which has
 more gaps then amino acids.)
 
+Please provide the alignment in FASTA format, most tools allow this as format as
+an output option.
+
 The first step is the classification of the sequences into subfamilies.
 This is undoubtedly the most difficult part, as it often requires 
 to identify the specific functionality based on scientific literature
 or even undertake experimental validation. Dedicated databases such as 
-\todo{add some DB} can help to identify 
+\href{https://www.uniprot.org/}{UniProt}.
+can help to identify 
 detailed protein functionality. 
 
 Even though there are various tools available that can cluster protein sequences, 
