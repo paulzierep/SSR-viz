@@ -9,3 +9,4 @@ ssrviz.egg-info/
 #standalones/
 *__pycache__
 *pyc
+*py.bak
