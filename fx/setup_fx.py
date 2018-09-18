@@ -30,6 +30,7 @@ build_exe_options = {"packages": ["os"],
  'includes':[
  'numpy.core._methods',
  'numpy.lib.format',
+ 'scipy.sparse.csgraph._validation',
  'matplotlib.backends.backend_tkagg',
  "tkinter",
  ],

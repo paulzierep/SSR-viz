@@ -33,9 +33,10 @@ build_exe_options = {"packages": ["os"], 'includes':[
  'numpy.lib.format',
  'matplotlib.backends.backend_tkagg',
  'scipy.sparse.csgraph._validation',
+ #'scipy.spatial.ckdtree'
  ],
  'include_files': get_resources() + dlls, 
- #"excludes": ["PyQt4"]
+ "excludes": ["scipy.spatial.cKDTree"]
  }
 
 # GUI applications require a different base on Windows (the default is for a
@@ -48,7 +49,7 @@ if sys.platform == "win32":
 
 setup(  name = "ssrviz",
         version = "0.1",
-        description = "Subfamily specific residue (ssr) detection and visualization toolbox",
+        description =  "Subfamily specific residue (ssr) detection and visualization toolbox",
         options = {"build_exe": build_exe_options},
         url = 'http://www.pharmazeutische-bioinformatik.de/',
         author='Paul Zierep',

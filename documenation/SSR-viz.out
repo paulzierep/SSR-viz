@@ -1,13 +1,17 @@
-\BOOKMARK [1][-]{section.1}{Install}{}% 1
-\BOOKMARK [1][-]{section.2}{Getting started}{}% 2
-\BOOKMARK [1][-]{section.3}{CSV builder}{}% 3
-\BOOKMARK [2][-]{subsection.3.1}{Arguments}{section.3}% 4
-\BOOKMARK [1][-]{section.4}{SSR plot}{}% 5
-\BOOKMARK [2][-]{subsection.4.1}{Algorithm}{section.4}% 6
-\BOOKMARK [2][-]{subsection.4.2}{Arguments}{section.4}% 7
-\BOOKMARK [2][-]{subsection.4.3}{Output}{section.4}% 8
-\BOOKMARK [1][-]{section.5}{Add pdb}{}% 9
-\BOOKMARK [2][-]{subsection.5.1}{Arguments}{section.5}% 10
-\BOOKMARK [1][-]{section.6}{Example}{}% 11
-\BOOKMARK [1][-]{section.7}{Appendix}{}% 12
-\BOOKMARK [2][-]{subsection.7.1}{Regex examples}{section.7}% 13
+\BOOKMARK [1][-]{section.1}{Installation}{}% 1
+\BOOKMARK [2][-]{subsection.1.1}{Using Pip}{section.1}% 2
+\BOOKMARK [2][-]{subsection.1.2}{Clone from GitHub}{section.1}% 3
+\BOOKMARK [2][-]{subsection.1.3}{Standalone executables \(easy but big\)}{section.1}% 4
+\BOOKMARK [2][-]{subsection.1.4}{Mafft}{section.1}% 5
+\BOOKMARK [1][-]{section.2}{Getting started}{}% 6
+\BOOKMARK [1][-]{section.3}{CSV builder}{}% 7
+\BOOKMARK [2][-]{subsection.3.1}{Arguments}{section.3}% 8
+\BOOKMARK [1][-]{section.4}{SSR plot}{}% 9
+\BOOKMARK [2][-]{subsection.4.1}{Algorithm}{section.4}% 10
+\BOOKMARK [2][-]{subsection.4.2}{Arguments}{section.4}% 11
+\BOOKMARK [2][-]{subsection.4.3}{Output}{section.4}% 12
+\BOOKMARK [1][-]{section.5}{Add pdb}{}% 13
+\BOOKMARK [2][-]{subsection.5.1}{Arguments}{section.5}% 14
+\BOOKMARK [1][-]{section.6}{Example}{}% 15
+\BOOKMARK [1][-]{section.7}{Appendix}{}% 16
+\BOOKMARK [2][-]{subsection.7.1}{Regex examples}{section.7}% 17
