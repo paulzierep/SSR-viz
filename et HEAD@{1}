@@ -1,0 +1,214 @@
+[33mcommit a85eb7a36816b89eb57aeb1248212546fc185d99[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Tue Aug 7 15:15:03 2018 +0200
+
+    poster docu
+
+[33mcommit ff4f0b1ff4bc5ce1d24947c5f8f93e51a6cfd899[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Fri Aug 3 15:32:12 2018 +0200
+
+    params tored in temp folder due to permision problem
+
+[33mcommit 6b756f53c723703c3e6e39f396cd6b996c39fc84[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Thu Aug 2 15:06:51 2018 +0200
+
+    pip for win + ubuntu
+
+[33mcommit 647ab391c75d712c05468f33824050e54a9a0e05[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Thu Aug 2 15:06:42 2018 +0200
+
+    pip for win + ubuntu
+
+[33mcommit 83c14b4a668384793a0209ed7cd414ff671bc832[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Thu Aug 2 11:39:28 2018 +0200
+
+    backup style
+
+[33mcommit 6cc204fab835af03441291e934f44be357b2f545[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Thu Aug 2 11:06:06 2018 +0200
+
+    test_data/ removed from cache
+
+[33mcommit 71b814f9b14fd791d4583f076e80491f2b0c1d72[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Thu Aug 2 11:00:49 2018 +0200
+
+    linux build with shared library
+
+[33mcommit 879e9fefc90556b3ed29a7c43cc22235545ef178[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Tue Jul 31 17:10:59 2018 +0200
+
+    working build for ubuntu
+
+[33mcommit 8254e902d969123cc50d26506eeb39147b7ac53a[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Tue Jul 31 16:20:28 2018 +0200
+
+    windows tests
+
+[33mcommit fb47976f7a40f98ff91ffe0749d0402cdf2d1e02[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Tue Jul 31 13:26:39 2018 +0200
+
+    working ubuntu build + standalone
+
+[33mcommit 2bccf4f717b8d1f6778f878363843837fb8fef43[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Mon Jul 30 14:39:02 2018 +0200
+
+    before clean up
+
+[33mcommit b8e015f2dcd716028240ec65371b1dbd37866a8d[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Mon Jul 23 14:02:31 2018 +0200
+
+    README form latex
+
+[33mcommit 09d9a58a5c51344478da8770554a4bd8228cc0cd[m
+Merge: 87afd12 5c8659d
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Mon Jul 23 13:20:27 2018 +0200
+
+    Merge branch 'master' of https://github.com/paulzierep/pssm_minimal
+
+[33mcommit 87afd120894048c00dfc28f53a1ccfeed1f2e644[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Mon Jul 23 13:20:06 2018 +0200
+
+    keep
+
+[33mcommit 5c8659d0ac362126050c206979211d56f8682adc[m
+Author: paul <paul.zierep@googlemail.com>
+Date:   Mon Jul 23 12:10:59 2018 +0200
+
+    docu 01
+
+[33mcommit d671e863a20cee98939f80d312a267facc3027d1[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Wed Jul 18 16:58:14 2018 +0200
+
+    Added builds for the LapTop
+
+[33mcommit b3f5bef0e3cce96ae086da07afc280088fa3626d[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Wed May 30 16:18:11 2018 +0200
+
+    new stuff
+
+[33mcommit b249c8904a5bebffb953e5d1592990b945136132[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Tue May 29 17:25:44 2018 +0200
+
+    sklearn removed from import
+
+[33mcommit 3baf9fd8fd14bd5fbc66be815c5ff315423f88fd[m
+Merge: d3c92f3 43ce51b
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Tue May 29 08:24:43 2018 -0700
+
+    windows build
+
+[33mcommit 43ce51bd2682ac9e0bc5275cc9d62cb140828c6a[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Tue May 29 14:22:48 2018 +0200
+
+    linux build, working, including stats, drawer called as subprocess
+
+[33mcommit 212d5c8314cd20bd6a8b9cfab503e5fab6a50542[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Wed May 23 15:51:30 2018 +0200
+
+    permutation solved, matrix fault, now better normalized
+
+[33mcommit 8095d0e479863f58384aaa397a3cdabb4cf366d5[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Wed May 23 10:02:23 2018 +0200
+
+    Working debug for the permutation problem
+
+[33mcommit 488579b534f2ca740d5e3a7f3adf00db337e3b8b[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Tue May 22 10:14:58 2018 +0200
+
+    save commit
+
+[33mcommit 5ccf83fd368dcfeb95fb87711ab170fe83463e38[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Fri May 18 18:02:38 2018 +0200
+
+    all in one file, csv and fig, better lookout, almost production
+
+[33mcommit 6963798fc926a0d6919defa11bd1d5fa1f9c01c2[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Fri May 18 15:49:18 2018 +0200
+
+    gui almost done, good kwargs, runs,
+
+[33mcommit d3c92f340b1ffd66c437b70479081419ed8a437b[m
+Merge: 50c38dc bfee8ef
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Wed May 16 04:42:31 2018 -0700
+
+    Merge branch 'master' of https://github.com/paulzierep/pssm_minimal
+
+[33mcommit bfee8efe9a29a673ebd94fdcf37006fec2ea03b1[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Wed May 16 13:41:51 2018 +0200
+
+    minor temp file change
+
+[33mcommit 50c38dc9be312fdf829f35c1efe8276fcd521ee4[m
+Merge: a98f3ef 5f7ba7f
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Wed May 16 04:36:52 2018 -0700
+
+    binary
+
+[33mcommit a98f3ef4cd31a4dfbe9b6a1b8c7a43acf6ffaa8a[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Wed May 16 04:36:07 2018 -0700
+
+    stash
+
+[33mcommit 5f7ba7fc3c4ea6363a66ee8dd87372f6002f8424[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Wed May 16 13:26:30 2018 +0200
+
+    test for two gooey windows, with transfer of data
+
+[33mcommit 66feb5d18e3e4ce2095fd4c49e2086922ec63a0d[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Wed May 16 11:08:33 2018 +0200
+
+    test for two gooey windows
+
+[33mcommit 13a14ad37e5e7529940468ebab86daa2b096e036[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Wed May 9 12:47:20 2018 +0200
+
+    setup for linux build
+
+[33mcommit 12c90cb726bfbd614bb27784fa98e7138e85a0a6[m
+Merge: 3f47b2e 2166177
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Mon May 7 13:41:37 2018 +0200
+
+    Merge branch 'master' of https://github.com/paulzierep/pssm_minimal
+
+[33mcommit 2166177cb4e1e972b90a5604ab08c9d187c12d1d[m
+Author: paulzierep <paul.zierep@googlemail.com>
+Date:   Mon May 7 13:38:11 2018 +0200
+
+    Initial commit
+
+[33mcommit 3f47b2ecf82fef8571653a9435052283ef37509f[m
+Author: Paul Zierep <paul.zierep@pharmazie.uni-freiburg.de>
+Date:   Mon May 7 13:36:50 2018 +0200
+
+    Initial set-up

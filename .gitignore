@@ -6,5 +6,6 @@ biovec.egg-info/
 dist_tests/
 test_ssrviz/
 ssrviz.egg-info/
+standalones/
 *__pycache__
 *pyc
