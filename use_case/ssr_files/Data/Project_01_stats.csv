@@ -1,0 +1,24 @@
+gly vs val
+Position,Score,gly Cons,gly All res.,val Cons,val All res.,3vns_V,4zxi_G,1amu
+61,0.8482774689900032,I,I,A,AFMV,209,671,236
+55,0.6985482120988358,T,ST,S,AGS,203,665,230
+54,0.6815126334656129,V,FV,T,AFHILT,202,664,229
+53,0.6774003301729971,A,ANQ,F,FHLMQ,201,663,228
+197,0.7477964432649842,W,LQW,F,CFLY,315,769,331
+196,0.6788848509508902,I,IMV,T,ITV,314,768,330
+147,0.6715864703760908,G,GLR,L,LV,274,732,295
+13,0.7040881940463618,F,FLS,L,FLS,183,645,210
+116,0.7366427767644816,W,LW,F,AFLV,257,719,284
+110,0.7249220942341102,Q,MQ,W,FLMSW,251,713,278
+all vs all
+Position,Score,unknown Cons,unknown All res.,dhpg Cons,dhpg All res.,abu Cons,abu All res.,aeo Cons,aeo All res.,hyv-d Cons,hyv-d All res.,his Cons,his All res.,dpg Cons,dpg All res.,ala Cons,ala All res.,val Cons,val All res.,tyr Cons,tyr All res.,hpg Cons,hpg All res.,gly Cons,gly All res.,alaninol Cons,alaninol All res.,trp Cons,trp All res.,dhb Cons,dhb All res.,tcl Cons,tcl All res.,pip Cons,pip All res.,vol Cons,vol All res.,bmt Cons,bmt All res.,ile Cons,ile All res.,valhyphaa Cons,valhyphaa All res.,phe Cons,phe All res.,cys Cons,cys All res.,gln Cons,gln All res.,sal Cons,sal All res.,leu Cons,leu All res.,orn Cons,orn All res.,aad Cons,aad All res.,d-lyserg Cons,d-lyserg All res.,dab Cons,dab All res.,ala-d Cons,ala-d All res.,ala-b Cons,ala-b All res.,lys-b Cons,lys-b All res.,dht Cons,dht All res.,pro Cons,pro All res.,thr Cons,thr All res.,bht Cons,bht All res.,iva Cons,iva All res.,asn Cons,asn All res.,ser Cons,ser All res.,lys Cons,lys All res.,glu Cons,glu All res.,asp Cons,asp All res.,ser-thr Cons,ser-thr All res.,phg Cons,phg All res.,arg Cons,arg All res.,3vns_V,4zxi_G,1amu
+68,0.726129864572927,A,AG,V,V,T,TV,G,G,T,T,T,T,V,V,P,AGLPSTV,G,AGLPV,M,GMPT,V,AV,L,AHLT,G,G,M,MP,G,GS,L,L,S,GS,T,T,T,T,G,G,W,W,M,GLMNPST,G,DG,A,AGLT,G,G,P,AFGMPTW,R,LRW,M,IMT,M,M,P,P,T,T,G,AG,P,P,G,G,S,AMSTV,G,AG,M,M,A,ACGLS,T,AGLT,W,LQW,A,AGP,W,ALW,P,GPSTW,A,A,A,A,L,LRS,216,678,243
+64,0.7720285604555831,A,AG,Y,Y,W,WY,L,L,L,L,E,E,Y,Y,M,FGLMWY,F,AEFGLWY,S,ALPST,F,FLVY,L,GLQ,W,W,W,AW,P,AP,G,G,Q,PQ,I,I,W,W,F,FM,W,W,W,FLPVW,Y,EFY,Q,GQW,P,P,W,AFILW,G,EGN,R,R,F,F,E,E,W,W,A,ATW,E,E,W,W,Q,ALQT,W,FW,S,S,G,G,T,T,W,GW,A,AEQ,W,KRW,T,KTW,L,L,F,F,W,AW,212,674,239
+61,0.7778669213264457,Q,QV,P,AP,A,AT,V,V,A,A,S,S,A,A,L,AILV,A,AFMV,A,AG,A,AIV,I,I,V,V,A,AGV,M,LM,H,H,Y,FY,A,A,A,A,A,AG,G,G,A,AL,L,HL,A,AG,L,L,A,AFG,V,IMV,P,P,V,V,L,L,L,L,D,D,T,T,F,F,V,IV,F,FMY,A,AT,L,CL,L,AL,V,LV,A,AV,A,APV,L,LMS,M,M,I,I,V,V,209,671,236
+54,0.7190671367062251,H,HQ,H,H,F,FH,F,F,F,F,V,V,H,H,Q,AFQSTVW,T,AFHILT,L,FLS,H,H,V,FV,W,W,H,HL,P,P,L,L,F,FP,F,F,L,L,A,ALT,V,V,F,CFS,L,FILV,L,FKL,A,AP,L,FHILMVY,M,IKLMT,F,FL,F,F,Q,Q,L,L,K,KR,F,F,F,F,F,FY,F,CFTV,F,FL,F,F,Y,HQY,K,FK,V,AV,K,KLTV,L,HKLNV,L,L,H,H,I,IM,202,664,229
+197,0.7976958298126279,C,CH,C,C,F,FY,M,M,I,I,C,C,C,C,A,AILY,F,CFLY,C,ACV,C,C,W,LQW,Y,Y,C,CV,N,CN,G,G,I,ITV,T,T,I,I,F,FY,I,I,C,CGM,W,TW,D,DY,C,CN,V,ACDFMV,D,DGN,V,ASV,M,M,S,S,V,V,D,D,V,V,H,H,V,ACILMV,H,HW,C,C,F,FV,G,G,D,DEY,C,CEN,D,DEGN,G,DGN,H,H,G,G,E,DE,315,769,331
+188,0.7695853558387269,I,IV,T,T,G,GV,G,G,G,G,E,E,T,T,L,AGLMST,G,ACGV,E,AEG,L,L,L,AGLM,A,A,S,ES,V,V,A,A,H,HV,G,G,G,G,V,CIV,I,I,A,AG,L,GLMP,V,GLV,V,V,N,ACEGLMN,S,GLS,E,EM,L,L,T,T,A,A,F,FLS,T,T,M,M,H,GHLV,M,LM,A,AG,G,G,E,E,L,AL,C,CFS,G,GRSV,H,AHMV,L,L,L,L,A,A,306,760,322
+151,0.7204780554307967,T,TV,G,GL,H,HW,C,C,V,V,T,T,A,A,N,CFGILMNVY,I,FILTW,V,EILTV,L,L,L,FLV,V,V,V,V,Q,Q,V,V,C,CLQ,I,I,Y,Y,L,FLY,I,I,I,AIMV,L,DFLM,L,FLV,Q,Q,L,FLMTY,I,ILW,I,FILV,V,V,N,N,Y,Y,I,IV,V,V,I,I,I,ACIV,I,AIV,V,ILV,L,LV,I,ILV,F,FILMV,A,AIP,F,FILS,V,ILMV,A,A,W,W,I,IV,278,736,299
+13,0.730019681574498,F,FS,L,L,L,L,A,A,C,C,T,T,L,L,F,CFGLSY,L,FLS,L,LNST,L,L,F,FLS,V,V,L,L,S,NS,E,E,L,LQ,V,V,L,L,L,LV,L,L,L,LNSTV,T,ALT,L,HLST,N,N,L,CFLNT,A,AMRV,S,ASY,A,A,Y,Y,L,L,R,R,V,V,L,L,L,ALS,L,LV,L,L,S,S,Y,Y,R,NR,Y,Y,F,FLRV,Y,FMY,T,T,L,L,T,TV,183,645,210
+115,0.7365803301345147,H,HP,T,QST,F,FL,V,V,Y,Y,F,F,H,H,F,AFILV,L,FLQTV,L,ALV,A,AFLST,L,FLT,A,A,V,QV,A,AL,F,F,V,IV,F,F,L,L,L,L,M,M,A,ALMVY,L,ILQTV,H,FHL,L,L,L,FILMSV,L,LMY,V,MV,V,V,H,H,L,L,L,L,F,F,A,A,F,AFV,A,AI,V,V,F,F,H,H,M,FM,L,LM,M,HILM,L,HLQ,W,W,L,L,I,IV,256,718,283
+110,0.7795917998687074,K,KL,H,HN,F,FW,L,L,H,H,L,L,N,N,N,CFGINTV,W,FLMSW,T,FILST,H,H,Q,MQ,Y,Y,A,ASV,A,ACS,S,S,Y,FSY,I,I,T,T,F,F,F,F,T,AGITV,N,HNS,D,DMQ,A,A,F,AFLMY,E,ENY,N,HN,S,S,H,H,F,F,V,LV,I,IV,N,N,F,FLSVY,N,NSV,T,KT,Y,FWY,K,K,H,HY,D,DHS,H,DH,K,DK,N,N,L,L,T,DT,251,713,278
