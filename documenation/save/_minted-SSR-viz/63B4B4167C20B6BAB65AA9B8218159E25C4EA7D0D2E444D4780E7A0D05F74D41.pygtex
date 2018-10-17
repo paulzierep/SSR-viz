@@ -1,0 +1,3 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+mafft \PYGZhy{}\PYGZhy{}auto NRPS\PYGZus{}A\PYGZus{}dom.fasta \PYGZgt{} NRPS\PYGZus{}A\PYGZus{}dom\PYGZus{}ali.fasta
+\end{Verbatim}
