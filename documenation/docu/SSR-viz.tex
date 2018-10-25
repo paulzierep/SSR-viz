@@ -222,22 +222,22 @@ Ones you collected the class information of your sequences you can add
 them to your alignment. The \textbf{CSV\_Builder} tool allows to creates 
 a comma separated value (CSV) file which can be used to add the subfamily 
 class label to the sequences
-(see section~\ref{csv_b}).
+(see Section~\ref{csv_b}).
 
 An alignment and the CSV file is everything needed to 
 detect subfamily specific residues in the sequences. 
 The \textbf{SSR\_plot} tool handles the actual execution of the detection
-algorithm, the output can be a mathplotlib \cite{hunter_matplotlib:_2007} style plot (see section~\ref{ssr_p})
+algorithm, the output can be a mathplotlib \cite{hunter_matplotlib:_2007} style plot (see Section~\ref{ssr_p})
 as pdf, a Javlview annotation file \cite{clamp_jalview_2004} (which can show the results together with the 
 alignment) as well as a 'stats.csv' file which summarizes the SSRs.
 
 In most cases it is desired to observe the SSRs in a structural context.
 Therefore, we also developed a tool \textbf{Add\_pdb} which allows
 to map the indices of a protein structure file (*.pdb) to the indices of the 
-alignment in the 'stats.csv' file (see section~\ref{add_p}).
+alignment in the 'stats.csv' file (see Section~\ref{add_p}).
 
 An overview chart which explains the setup of the three tools is shown in
-the figure~\ref{fig:flow_chart}.
+the Figure~\ref{fig:flow_chart}.
 
 \begin{figure}
   \includegraphics[width=\linewidth]{./figs/flow_chart}
@@ -335,7 +335,7 @@ summation of all three individual scores.
 SSR_{score}(\alpha, \beta)_m = CS(\alpha, \beta)_m * EP(\alpha, \beta)_m * WEP(\alpha, \beta)_m 
 \end{equation}
 
-An example of the scoring algorithm for a hypothetical alignment can be seen in figure~\ref{fig:scoring_02bigger}.
+An example of the scoring algorithm for a hypothetical alignment can be seen in Figure~\ref{fig:scoring_02bigger}.
 
 \begin{figure}
   \includegraphics[width=\linewidth]{./figs/scoring_02bigger}
@@ -359,7 +359,7 @@ that the alignment and CSV class label file have the right formating.
 \item[\texttt{Input sequence alignment file}] \hfill \\
  
 The alignment file with the sequences of the family.
-The desired format is in FASTA format (clustalo), see section~\ref{example}
+The desired format is in FASTA format (clustalo), see Section~\ref{example}
 for an example.
 
 \item[\texttt{Inplace FASTA conversion / Temporary alignment file name}] \hfill \\
@@ -505,7 +505,7 @@ See also \ref{algo} and \ref{example}.
 
 Here the created visualization can be adjusted, in order to create nice looking plots.
 The output figure consists of two parts, a heatmap of the SSRs and a plot 
-with the most significant positions on top (see figure \ref{fig:plot_example}).
+with the most significant positions on top (see Figure \ref{fig:plot_example}).
  
 \begin{figure}
   \includegraphics[width=\linewidth]{./figs/plot_example}
