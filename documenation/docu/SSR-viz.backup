@@ -1,0 +1,70 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+%opening
+\title{SSR-viz - a toolbox to detect and visualize protein
+subfamily specific residues}
+\author{Paul Zierep}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+Protein families can often be further divide into 
+functional diverse subfamilies. Each subfamily posses very specific functions
+which distinguishes them from each other. Examples are substrate specificity,
+protein-protein interaction or different reaction types. In many cases these functions are
+based on a limited set of residues. Therefore, to understand the protein diversity,
+the identification of those residues is crucial.
+In order to support researchers in this task we developed a toolbox
+which allows to detect and visualize those residues, based on a multiple sequence 
+alignment of proteins with experimental validated functionality.
+
+\end{abstract}
+
+\section{Install}
+
+
+\section{Getting started}
+
+The SSR-viz algorithm is based on a multiple sequence alignment (MSA) file in 
+FASTA format, which can be generated with various tools, such as Clustalo 
+and Mafft or with a Webserver such as (\todo{cite and add server}). 
+
+The topic of sequence alignment is beyond the scope of this manual.  
+Nevertheless one should keep in mind that 
+the quality of the alignment is crucial for the detection algorithm.
+(Is is difficult to interpret the importance of a position, which has
+more gaps then amino acids.)
+
+The first step is the classification of the sequences into subfamilies.
+This is undoubtedly the most difficult part, as it often requires 
+to identify the specific functionality based on scientific literature
+or even undertake experimental validation.
+
+Dedicated databases such as \todo{add some DB} can help to identify 
+protein function. 
+
+Even though there are various tools available that can cluster protein sequences, 
+these clustering methods always apply some kind of similarity scoring,
+which leads in most cases to a clustering based on evolutionary relationship 
+rather then functional similarity. 
+This is demonstrated on an example in subsection \ref{example}
+
+
+
+
+
+The program comes with a GUI which is subdivided into three separate tools:
+CSV\_builder, which covers the annotation of the sequences
+
+\section{Algorithm} 
+
+
+\section{Example} \label{example}
+
+
+
+\end{document}

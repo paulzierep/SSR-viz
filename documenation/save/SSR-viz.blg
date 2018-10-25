@@ -1,0 +1,15 @@
+[0] Config.pm:340> INFO - This is Biber 2.4
+[0] Config.pm:343> INFO - Logfile is 'SSR-viz.blg'
+[27] biber:287> INFO - === Mi Okt 17, 2018, 16:08:56
+[89] Biber.pm:348> INFO - Reading 'SSR-viz.bcf'
+[182] Biber.pm:742> INFO - Found 5 citekeys in bib section 0
+[186] Biber.pm:3151> INFO - Processing section 0
+[206] Biber.pm:3308> INFO - Looking for bibtex format file './bib/publication.bib' for section 0
+[282] bibtex.pm:1113> INFO - Decoding LaTeX character macros into UTF-8
+[351] bibtex.pm:974> INFO - Found BibTeX data source './bib/publication.bib'
+[426] UCollate.pm:65> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[426] UCollate.pm:65> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[426] Biber.pm:3028> INFO - Sorting list 'none/global' of type 'entry' with scheme 'none' and locale 'en-US'
+[426] Biber.pm:3032> INFO - No sort tailoring available for locale 'en-US'
+[430] bbl.pm:519> INFO - Writing 'SSR-viz.bbl' with encoding 'ascii'
+[519] bbl.pm:615> INFO - Output to SSR-viz.bbl

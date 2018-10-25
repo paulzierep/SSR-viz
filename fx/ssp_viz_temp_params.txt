@@ -1,0 +1,1 @@
+{"class": "Class", "csv": "/home/paul/GitRepos/SSR-viz/ssrviz/example_data/class_labels.csv", "classes": ["m", "em", "mom", "mm"], "alignment": "/home/paul/GitRepos/SSR-viz/ssrviz/example_data/AT_alignment.fasta"}
