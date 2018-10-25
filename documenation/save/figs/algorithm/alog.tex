@@ -1,0 +1,64 @@
+
+\documentclass[12pt]{article}
+\usepackage{blkarray}
+\usepackage{amsmath}
+
+\begin{document}
+
+The alignments is split into Position probability matrix
+\begin{equation}
+PPM(\alpha) =
+\begin{blockarray}{cccc}
+ & 1 & 2  & m  \\
+\begin{block}{c(ccc)}
+  A & \alpha_{A1} & \alpha_{A2}  & \alpha_{Am} \\
+  R & \alpha_{R1} & \alpha_{R2}  & \alpha_{Rm} \\
+  n & \alpha_{n1} & \alpha_{n2}  & \alpha_{nm} \\
+\end{block}
+\end{blockarray}
+\end{equation}
+
+Normalized inverted Shannon entropy for each alignment 
+as conservation score 
+\begin{equation}
+CS(m) = 1 - S(m) 
+\end{equation}
+\begin{equation}
+S(m) = -\frac{\sum(\alpha_n*\log_2(\alpha_n))}{S_{max}}
+\end{equation}
+
+Exchange probability
+\begin{equation}
+EP(m) =
+  \begin{bmatrix}
+    0 & \alpha_{A1} * \beta_{R1} & \alpha_{A1} * \beta_{n1} \\
+    \alpha_{R1} * \beta_{A1} & 0 & \alpha_{R1} * \beta_{n1} \\
+    \alpha_{n1} * \beta_{A1} & \alpha_{n1} * \beta_{R1} & 0 \\
+  \end{bmatrix}
+\end{equation}
+
+Weighed exchange matrix (PAM, BLOSUM)
+\begin{equation}
+WEM =
+\begin{blockarray}{cccc}
+ & A & R  & n  \\
+\begin{block}{c(ccc)}
+  A & 0 & i_{AR}  & i_{An} \\
+  R & i_{RA} & 0  &  i_{An} \\
+  n & i_{nA} &  i_{nR}  & 0 \\
+\end{block}
+\end{blockarray}
+\end{equation}
+
+Weighed exchange probability 
+\begin{equation}
+WEP(m) = EP_m * WEM * \beta
+\end{equation}
+where $\beta$ is the influence of the matrix.  
+
+Subfamily specific residue (SSR) score of position m ($ES_m$)
+\begin{equation}
+SSR_{score}(m) = CS_m * EP_m * WEP_m 
+\end{equation}
+
+\end{document}

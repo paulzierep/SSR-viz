@@ -1,0 +1,24 @@
+all vs all
+Position,Score,leu Cons,leu All res.,val Cons,val All res.,phg Cons,phg All res.,4ppro Cons,4ppro All res.,orn Cons,orn All res.,sal Cons,sal All res.,glu Cons,glu All res.,ala Cons,ala All res.,lys Cons,lys All res.,hpg Cons,hpg All res.,dht Cons,dht All res.,gln Cons,gln All res.,vol Cons,vol All res.,lys-b Cons,lys-b All res.,ala-b Cons,ala-b All res.,pip Cons,pip All res.,alaninol Cons,alaninol All res.,asp Cons,asp All res.,tyr Cons,tyr All res.,iva Cons,iva All res.,ser-thr Cons,ser-thr All res.,aad Cons,aad All res.,cys Cons,cys All res.,dhb Cons,dhb All res.,gly Cons,gly All res.,d-lyserg Cons,d-lyserg All res.,abu Cons,abu All res.,pro Cons,pro All res.,dab Cons,dab All res.,bht Cons,bht All res.,aeo Cons,aeo All res.,phe Cons,phe All res.,thr Cons,thr All res.,ile Cons,ile All res.,hyv-d Cons,hyv-d All res.,ala-d Cons,ala-d All res.,asn Cons,asn All res.,arg Cons,arg All res.,bmt Cons,bmt All res.,dhpg Cons,dhpg All res.,trp Cons,trp All res.,his Cons,his All res.,tcl Cons,tcl All res.,valhyphaa Cons,valhyphaa All res.,ser Cons,ser All res.,3-me-glu Cons,3-me-glu All res.,dpg Cons,dpg All res.,1amu,3vns_V,4zxi_G
+68,0.7319081458482184,P,AFGMPTW,G,AGLPV,A,A,G,G,R,LRW,G,G,W,ALW,P,AGLPSTV,A,AGP,V,AV,G,G,A,AGLT,T,T,P,P,G,AG,S,GS,G,G,P,GPSTW,M,GMPT,A,ACGLS,A,A,M,IMT,G,DG,G,GS,L,AHLT,M,M,T,TV,S,AMSTV,P,P,M,M,G,G,M,GLMNPST,G,AG,G,G,T,T,T,T,T,AGLT,L,LRS,T,T,V,V,M,MP,T,T,L,L,W,W,W,LQW,A,A,V,V,243,216,678
+64,0.781683707480104,W,AFILW,F,AEFGLWY,F,F,A,A,G,EGN,P,P,W,KRW,M,FGLMWY,A,AEQ,F,FLVY,W,W,Q,GQW,I,I,E,E,A,ATW,Q,PQ,W,W,T,KTW,S,ALPST,G,G,L,L,R,R,Y,EFY,P,AP,L,GLQ,F,F,W,WY,Q,ALQT,E,E,S,S,L,L,W,FLPVW,W,FW,F,FM,L,L,W,W,T,T,W,AW,W,W,Y,Y,W,AW,E,E,G,G,W,W,W,GW,G,G,Y,Y,239,212,674
+61,0.7863987455615717,A,AFG,A,AFMV,I,I,V,V,V,IMV,L,L,A,APV,L,AILV,A,AV,A,AIV,F,F,A,AG,A,A,T,T,D,D,Y,FY,V,V,L,LMS,A,AG,L,CL,M,M,P,P,L,HL,M,LM,I,I,V,V,A,AT,V,IV,L,L,A,AT,V,V,A,AL,F,FMY,A,AG,A,A,L,L,L,AL,V,V,A,A,P,AP,A,AGV,S,S,H,H,G,G,V,LV,Q,Q,A,A,236,209,671
+54,0.7290663020364767,L,FHILMVY,T,AFHILT,H,H,H,H,M,IKLMT,A,AP,K,KLTV,Q,AFQSTVW,V,AV,H,H,F,F,L,FKL,F,F,F,F,K,KR,F,FP,W,W,L,HKLNV,L,FLS,F,F,L,L,F,FL,L,FILV,P,P,V,FV,F,F,F,FH,F,FY,Q,Q,F,FL,F,F,F,CFS,F,CFTV,A,ALT,F,F,L,L,Y,HQY,I,IM,L,L,H,H,H,HL,V,V,L,L,V,V,K,FK,Q,Q,H,H,229,202,664
+197,0.8029639575632544,V,ACDFMV,F,CFLY,G,G,C,C,D,DGN,C,CN,D,DEGN,A,AILY,C,CEN,C,C,H,H,D,DY,T,T,V,V,D,D,I,ITV,Y,Y,G,DGN,C,ACV,F,FV,H,H,V,ASV,W,TW,N,CN,W,LQW,M,M,F,FY,V,ACILMV,S,S,C,C,M,M,C,CGM,H,HW,F,FY,I,I,V,V,G,G,E,DE,I,I,C,C,C,CV,C,C,G,G,I,I,D,DEY,H,H,C,C,331,315,769
+188,0.7786743914219458,N,ACEGLMN,G,ACGV,L,L,I,I,S,GLS,V,V,G,GRSV,L,AGLMST,C,CFS,L,L,M,M,V,GLV,G,G,T,T,F,FLS,H,HV,A,A,H,AHMV,E,AEG,G,G,L,L,E,EM,L,GLMP,V,V,L,AGLM,L,L,G,GV,H,GHLV,T,T,A,AG,G,G,A,AG,M,LM,V,CIV,G,G,A,A,E,E,A,A,G,G,T,T,S,ES,E,E,A,A,I,I,L,AL,V,V,T,T,322,306,760
+151,0.7279836068601674,L,FLMTY,I,FILTW,W,W,V,V,I,ILW,Q,Q,F,FILS,N,CFGILMNVY,A,AIP,L,L,I,I,L,FLV,I,I,V,V,I,IV,C,CLQ,V,V,V,ILMV,V,EILTV,L,LV,A,A,I,FILV,L,DFLM,Q,Q,L,FLV,V,V,H,HW,I,ACIV,N,N,V,ILV,C,C,I,AIMV,I,AIV,L,FLY,V,V,Y,Y,I,ILV,I,IV,Y,Y,G,GL,V,V,T,T,V,V,I,I,F,FILMV,T,T,A,A,299,278,736
+13,0.7417276440147679,L,CFLNT,L,FLS,L,L,S,S,A,AMRV,N,N,F,FLRV,F,CFGLSY,Y,Y,L,L,L,L,L,HLST,V,V,V,V,R,R,L,LQ,V,V,Y,FMY,L,LNST,S,S,T,T,S,ASY,T,ALT,S,NS,F,FLS,A,A,L,L,L,ALS,Y,Y,L,L,A,A,L,LNSTV,L,LV,L,LV,C,C,L,L,Y,Y,T,TV,L,L,L,L,L,L,T,T,E,E,L,L,R,NR,F,F,L,L,210,183,645
+115,0.747771373768773,L,FILMSV,L,FLQTV,L,L,P,P,L,LMY,L,L,M,HILM,F,AFILV,L,LM,A,AFLST,A,A,H,FHL,F,F,F,F,L,L,V,IV,A,A,L,HLQ,L,ALV,F,F,W,W,V,MV,L,ILQTV,A,AL,L,FLT,V,V,F,FL,F,AFV,H,H,V,V,V,V,A,ALMVY,A,AI,L,L,Y,Y,L,L,H,H,I,IV,L,L,T,QST,V,QV,F,F,F,F,M,M,M,FM,H,H,H,H,283,256,718
+110,0.7876686718003945,F,AFLMY,W,FLMSW,L,L,L,L,E,ENY,A,A,H,DH,N,CFGINTV,D,DHS,H,H,N,N,D,DMQ,I,I,I,IV,V,LV,Y,FSY,Y,Y,K,DK,T,FILST,Y,FWY,N,N,N,HN,N,HNS,A,ACS,Q,MQ,S,S,F,FW,F,FLSVY,H,H,T,KT,L,L,T,AGITV,N,NSV,F,F,H,H,F,F,K,K,T,DT,T,T,H,HN,A,ASV,L,L,S,S,F,F,H,HY,K,K,N,N,278,251,713
+gly vs val
+Position,Score,gly Cons,gly All res.,val Cons,val All res.,1amu,3vns_V,4zxi_G
+61,0.8482774689900032,I,I,A,AFMV,236,209,671
+55,0.6985482120988358,T,ST,S,AGS,230,203,665
+54,0.6815126334656129,V,FV,T,AFHILT,229,202,664
+53,0.6774003301729971,A,ANQ,F,FHLMQ,228,201,663
+197,0.7477964432649842,W,LQW,F,CFLY,331,315,769
+196,0.6788848509508902,I,IMV,T,ITV,330,314,768
+147,0.6715864703760908,G,GLR,L,LV,295,274,732
+13,0.7040881940463618,F,FLS,L,FLS,210,183,645
+116,0.7366427767644816,W,LW,F,AFLV,284,257,719
+110,0.7249220942341102,Q,MQ,W,FLMSW,278,251,713

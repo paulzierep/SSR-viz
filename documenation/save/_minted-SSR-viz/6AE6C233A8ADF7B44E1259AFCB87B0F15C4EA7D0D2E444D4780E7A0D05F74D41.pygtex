@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+sudo apt\PYGZhy{}get install libwebkitgtk\PYGZhy{}dev libgtk2.0\PYGZhy{}dev libsdl1.2\PYGZhy{}dev \PYG{l+s+se}{\PYGZbs{}}
+freeglut3 freeglut3\PYGZhy{}dev libnotify\PYGZhy{}dev libgstreamerd\PYGZhy{}3\PYGZhy{}dev \PYG{l+s+se}{\PYGZbs{}}
+libgl1\PYGZhy{}mesa\PYGZhy{}glx libglu1\PYGZhy{}mesa libgl1\PYGZhy{}mesa\PYGZhy{}dev libglu1\PYGZhy{}mesa\PYGZhy{}dev \PYG{l+s+se}{\PYGZbs{}}
+libgconf2\PYGZhy{}dev libsdl1.2\PYGZhy{}dev zlib1g\PYGZhy{}dev libjpeg62\PYGZhy{}dev
+\end{Verbatim}

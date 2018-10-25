@@ -1,0 +1,35 @@
+# pip
+
+biopython==1.70
+numpy==1.14.3 
+scipy==1.1.0
+biopython==1.70
+scikit-learn==0.18.2
+pydotplus==2.0.2
+matplotlib==2.2.2
+natsort==5.3.0
+Gooey==1.0.0
+
+#double check
+
+for gooey:
+sudo apt-get install libwebkitgtk-dev libjpeg-dev libtiff-dev libgtk2.0-dev libsdl1.2-dev freeglut3 freeglut3-dev libnotify-dev libgstreamerd-3-dev
+sudo apt-get install libgl1-mesa-glx libglu1-mesa libgl1-mesa-dev libglu1-mesa-dev libgstreamer0.10-dev libgconf2-dev libsdl1.2-dev zlib1g-dev libjpeg62-dev libtiff4-dev python-gst0.10-dev 
+
+Ubuntu install:
+
+sudo ln -s /home/paul/GitRepos/SSR-viz/SSR-viz_script.py /usr/local/bin/SSR-viz #command line executable
+sudo cp ~/GitRepos/SSR-viz/ssr-viz.desktop ./ #make it an application
+
+#wxpython minimal:
+
+sudo apt-get install libwebkitgtk-dev libgtk2.0-dev libsdl1.2-dev freeglut3 freeglut3-dev libnotify-dev libgstreamerd-3-dev libgl1-mesa-glx libglu1-mesa libgl1-mesa-dev libglu1-mesa-dev libgconf2-dev libsdl1.2-dev zlib1g-dev libjpeg62-dev
+
+#tkinter
+
+sudo apt-get install python3-tk
+
+#wxpython -> mac
+
+brew install wxpython
+
