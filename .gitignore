@@ -1,17 +1,19 @@
-#here I store all the stuff
+#only for publication
 
+example_data/
 data/
 dist/
 build/
-#test_data/
+test_data/
 biovec.egg-info/
 dist_tests/
 test_ssrviz/
 ssrviz.egg-info/
 fx/build/
-#old/
-#setup/
-#standalones/
+fx/
+old/
+setup/
+#standalone/
 *__pycache__
 *pyc
 *py.bakls

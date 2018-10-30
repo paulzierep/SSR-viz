@@ -1,3 +1,8 @@
+import matplotlib
+#MPL ships a lot of backends, in order to run it without 
+#calling all the stuff like TK use the use option
+matplotlib.use("Agg") 
+
 import datetime
 from matplotlib.backends.backend_pdf import PdfPages
 #from .lib.mpl_strong_colors import cnames
@@ -12,6 +17,7 @@ import string
 import itertools
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+
 import sys
 #for sub_matrix if the matrix is not provided
 from Bio.Data import IUPACData

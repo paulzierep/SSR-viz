@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-
 import os
 import argparse
 #from pssm_lib.main_pred import pred_rule
